@@ -1,0 +1,52 @@
+---
+title: "Timezone"
+description: "What the account timezone affects and what stays in PMS time."
+---
+
+PX stores the underlying timestamps for every reservation in UTC. The **timezone** setting on the Account Preferences card controls how those timestamps display in the UI.
+
+## How to set it
+
+1. Open **Settings**.
+2. In the **Account Preferences** card, open the **Timezone** dropdown.
+3. Pick from the US timezone list:
+   - Pacific (US/Pacific)
+   - Mountain (US/Mountain)
+   - Central (US/Central)
+   - Eastern (US/Eastern)
+   - Alaska (US/Alaska)
+   - Hawaii (US/Hawaii)
+4. PX shows a *"Timezone updated successfully"* toast.
+
+Saving is automatic. There is no Save button.
+
+## What the timezone affects
+
+| Surface | Affected |
+|---|---|
+| Property detail - reservation arrival/departure dates | Yes |
+| Audit results - arrival/departure | Yes |
+| Reports - check-in/check-out columns | Yes |
+| Findings - detected/fixed timestamps | Yes |
+| Home dashboard - trend chart | Yes |
+| Issue detected/fixed dates | Yes |
+
+## What it does not affect
+
+| Surface | Reason |
+|---|---|
+| Stored timestamps in the database | Always UTC. Timezone is display-only. |
+| The PMS itself | PX is read-only against your PMS. |
+| Business model `activation_date` | Stored as a date, not a timestamp - timezone-agnostic. |
+| Audit date range pickers | The pickers select calendar dates regardless of timezone. |
+| CSV/PDF exports | Exports use the user's display timezone at the time of export. |
+
+## Why only US timezones?
+
+The current dropdown is constrained to US timezones because PX's customer base is US-centric. International timezone support is on the roadmap. Reach out to support@pxaccounting.com if you need a non-US timezone.
+
+## Edge cases
+
+- **Daylight saving time** - PX handles DST automatically. The timezone you pick is the IANA zone (US/Pacific, etc.), not a fixed offset.
+- **Properties in a different timezone from your account** - timezones are account-level today, not per-property. Bookings still display in your account timezone, even when the property is elsewhere. PMS-reported check-in/check-out times are unaffected.
+- **Multi-user accounts** - the timezone setting is per-account, not per-user. If multiple people work in your account from different cities, they all see the same display timezone.

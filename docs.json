@@ -1,8 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
-  "name": "Product Guide",
-  "description": "Step-by-step guides for every product—platform setup, analytics, and integrations in one place.",
+  "name": "PX Accounting",
+  "description": "Set up your PMS, configure business models and taxes, and audit every reservation - the end-user guide for PX Accounting.",
   "colors": {
     "primary": "#166E3F",
     "light": "#26BD6C",
@@ -27,122 +27,106 @@
           "href": "/"
         },
         {
-          "anchor": "Changelog",
-          "icon": "scroll-text",
-          "href": "https://www.mintlify.com/docs/changelog"
+          "anchor": "Dashboard",
+          "icon": "layout-dashboard",
+          "href": "https://app.pxaccounting.com"
         },
         {
-          "anchor": "Help",
+          "anchor": "Support",
           "icon": "life-buoy",
-          "href": "https://www.mintlify.com/docs/contact-support"
+          "href": "mailto:support@pxaccounting.com"
         }
       ]
     },
-    "directory": "card",
-    "products": [
+    "groups": [
       {
-        "product": "Platform",
-        "description": "Core platform setup, configuration, and administration.",
-        "icon": "layers",
-        "groups": [
-          {
-            "group": "Getting started",
-            "expanded": true,
-            "root": "platform/index",
-            "pages": [
-              "platform/quickstart",
-              "platform/key-concepts"
-            ]
-          },
-          {
-            "group": "Configuration",
-            "expanded": true,
-            "root": "platform/configuration/index",
-            "pages": [
-              "platform/configuration/settings",
-              "platform/configuration/user-management"
-            ]
-          },
-          {
-            "group": "Administration",
-            "expanded": true,
-            "root": "platform/administration/index",
-            "pages": [
-              "platform/administration/roles-permissions",
-              "platform/administration/audit-logs"
-            ]
-          }
+        "group": "Get started",
+        "expanded": true,
+        "pages": [
+          "get-started/welcome",
+          "get-started/quickstart",
+          "get-started/concepts"
         ]
       },
       {
-        "product": "Analytics",
-        "description": "Build dashboards, run reports, and analyze your data.",
-        "icon": "chart-bar",
-        "groups": [
-          {
-            "group": "Getting started",
-            "expanded": true,
-            "root": "analytics/index",
-            "pages": [
-              "analytics/quickstart",
-              "analytics/connect-data"
-            ]
-          },
-          {
-            "group": "Dashboards",
-            "expanded": true,
-            "root": "analytics/dashboards/index",
-            "pages": [
-              "analytics/dashboards/create-dashboard",
-              "analytics/dashboards/charts-visualizations",
-              "analytics/dashboards/sharing-exports"
-            ]
-          },
-          {
-            "group": "Reports",
-            "expanded": true,
-            "root": "analytics/reports/index",
-            "pages": [
-              "analytics/reports/build-report",
-              "analytics/reports/scheduled-reports"
-            ]
-          }
+        "group": "PMS integrations",
+        "expanded": true,
+        "pages": [
+          "integrations/overview",
+          "integrations/connect-guesty",
+          "integrations/connect-ownerrez",
+          "integrations/how-sync-works"
         ]
       },
       {
-        "product": "Integrations",
-        "description": "Connect your tools with pre-built connectors and webhooks.",
-        "icon": "plug",
-        "groups": [
-          {
-            "group": "Getting started",
-            "expanded": true,
-            "root": "integrations/index",
-            "pages": [
-              "integrations/quickstart",
-              "integrations/authentication"
-            ]
-          },
-          {
-            "group": "Connectors",
-            "expanded": true,
-            "root": "integrations/connectors/index",
-            "pages": [
-              "integrations/connectors/crm",
-              "integrations/connectors/data-warehouse",
-              "integrations/connectors/messaging"
-            ]
-          },
-          {
-            "group": "Webhooks & events",
-            "expanded": true,
-            "root": "integrations/webhooks/index",
-            "pages": [
-              "integrations/webhooks/configure",
-              "integrations/webhooks/event-types",
-              "integrations/webhooks/retry-policies"
-            ]
-          }
+        "group": "Properties",
+        "expanded": true,
+        "pages": [
+          "properties/manage",
+          "properties/property-detail",
+          "properties/auto-fix",
+          "properties/owners"
+        ]
+      },
+      {
+        "group": "Business models",
+        "expanded": true,
+        "pages": [
+          "business-models/overview",
+          "business-models/create",
+          "business-models/net-rental-income",
+          "business-models/commission",
+          "business-models/trust-account",
+          "business-models/tax-remittance",
+          "business-models/assign",
+          "business-models/lifecycle"
+        ]
+      },
+      {
+        "group": "Tax configuration",
+        "expanded": true,
+        "pages": [
+          "tax-configuration/overview",
+          "tax-configuration/account-level",
+          "tax-configuration/per-listing",
+          "tax-configuration/channel-overrides",
+          "tax-configuration/airbnb-remittance"
+        ]
+      },
+      {
+        "group": "PMS configuration",
+        "expanded": true,
+        "pages": [
+          "pms-configuration/guesty",
+          "pms-configuration/ownerrez-catalog"
+        ]
+      },
+      {
+        "group": "Audits",
+        "expanded": true,
+        "pages": [
+          "audit/overview",
+          "audit/run-an-audit",
+          "audit/understanding-findings",
+          "audit/check-categories",
+          "audit/export-pdf"
+        ]
+      },
+      {
+        "group": "Reports",
+        "expanded": true,
+        "pages": [
+          "reports/financial-report"
+        ]
+      },
+      {
+        "group": "Account & billing",
+        "expanded": true,
+        "pages": [
+          "account/settings",
+          "account/timezone",
+          "account/billing",
+          "account/delete-account"
         ]
       }
     ]
@@ -155,14 +139,14 @@
     "links": [],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Open dashboard",
+      "href": "https://app.pxaccounting.com"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/yourcompany",
-      "linkedin": "https://linkedin.com/company/yourcompany"
+      "x": "https://x.com/pxaccounting",
+      "linkedin": "https://linkedin.com/company/pxaccounting"
     }
   }
 }

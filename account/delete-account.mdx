@@ -1,0 +1,77 @@
+---
+title: "Delete your account"
+description: "What happens when you delete a PX Accounting account."
+---
+
+Account deletion is permanent and cannot be reversed. Read this page before clicking the button.
+
+## Where it lives
+
+**Settings** -> scroll to the **Danger Zone** section -> **Delete Account** button.
+
+Clicking the button opens a confirmation dialog with a 2FA-style verification step. You must complete the verification to proceed.
+
+## What gets deleted
+
+When you confirm:
+
+- **PMS credentials** - encrypted Client ID, Client Secret, and OAuth tokens are removed.
+- **Webhook subscriptions** - PX unregisters its webhook endpoints with your PMS.
+- **Properties** - synced and manual properties.
+- **Reservations cache** - any cached reservation data.
+- **Business models** - all models and their version history.
+- **Tax configuration** - including channel sync overrides and Airbnb remittance.
+- **OwnerRez catalog** - all rows.
+- **Audit history** - every audit you have run.
+- **Issue history** - findings, fix actions, dismissals.
+- **Reports** - generated reports.
+- **Billing record** - the Stripe customer record is deleted; saved payment methods are detached.
+- **Authentication** - your Clerk identity is removed; you are logged out and cannot log back in to this account.
+
+## What stays
+
+A few things survive deletion:
+
+- **Anonymized usage logs** - retained per the privacy policy for security and abuse prevention.
+- **Stripe transaction history** - tax authorities require us to keep payment records.
+- **Audit log of the deletion itself** - for compliance.
+
+None of these contain personally identifiable information beyond what tax law requires.
+
+## What does NOT get deleted
+
+- **Your PMS data** - PX is read-only against your PMS. Nothing in Guesty or OwnerRez is changed by deleting your PX account.
+- **PMS webhook history** - your PMS may keep a record of webhooks it sent before PX was disconnected. That is on the PMS side.
+- **Bookings, owners, listings in your PMS** - all preserved.
+
+## Before deleting
+
+Consider:
+
+- **Export anything you want to keep.** Audit PDFs, CSV exports of reports - download them first. Once the account is deleted, they are gone.
+- **Cancel billing first** - or it can be done as part of deletion, but doing it explicitly via Stripe ensures no last-minute charges.
+- **Check for in-flight audits** - cancel any running audits before deleting; otherwise the worker may emit errors.
+- **Inform team members** - if multiple people use the account, deletion affects them all.
+
+## Alternative: disconnect without deleting
+
+If you are unsure, disconnect the PMS instead of deleting the account:
+
+- Open **Settings**.
+- In **PMS Connection**, click **Delete**.
+
+This removes credentials and webhooks but preserves your business models, audit history, and other PX-side configuration. You can reconnect anytime.
+
+This is the right choice if:
+
+- You are switching from one PMS to another and want to keep history.
+- You are pausing operations and may resume later.
+- You want to stop syncs while preserving the option to come back.
+
+Account deletion is for when you are sure you do not want PX at all.
+
+## Reactivation
+
+Account deletion is final. There is no "undo" window. Re-creating an account with the same email starts from a fresh slate - no business models, no audit history, no integrations.
+
+If you delete by mistake, contact support@pxaccounting.com immediately. There is a small grace window (typically 7 days) during which we may be able to recover, but no guarantees.

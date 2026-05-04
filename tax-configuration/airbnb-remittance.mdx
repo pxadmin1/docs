@@ -1,0 +1,88 @@
+---
+title: "Airbnb tax remittance"
+description: "Tell PX which taxes Airbnb collects and remits so audits suppress those findings."
+---
+
+Airbnb collects and remits some taxes on behalf of hosts in many jurisdictions. When that happens, your PMS may or may not record those taxes on the booking - and if you do not tell PX about it, audits will flag them as `MISSING_TAX` findings.
+
+The **Airbnb tax remittance** wizard sits at the top of the Tax Configuration page. It is a four-step setup with sensible defaults.
+
+<Frame caption="Airbnb tax remittance card">
+  ![Airbnb remittance card](/images/screenshots/airbnb-remittance.png)
+</Frame>
+
+## Step 1 - does Airbnb remit taxes for you?
+
+A single yes/no toggle: **`airbnb_remits`**.
+
+- **No** (default for new accounts) - Airbnb does not collect any taxes on your behalf. Audits expect every tax on every Airbnb booking. Skip the rest of the wizard.
+- **Yes** - move to Step 2.
+
+If Airbnb remits at least one tax on at least one of your listings, set this to Yes.
+
+## Step 2 - which listings?
+
+Two options:
+
+- **All listings** - Airbnb's remittance applies to every property in your account.
+- **Selected listings** - pick specific listings via a multi-select picker.
+
+Use **Selected** when remittance is jurisdiction-specific. For example, Airbnb remits Texas state hotel tax on Texas listings but not on California listings.
+
+If you choose Selected, the picker lets you assign each listing to an exception group (for cases where different listings have different remittance rules). Each listing can be in **at most one** exception, but each exception can cover many listings.
+
+## Step 3 - which taxes?
+
+Three choices:
+
+- **All taxes** - Airbnb remits every tax PX knows about. Audits skip every tax check on Airbnb bookings.
+- **None** - Airbnb collects but does not remit anything (unusual setup; most hosts will not pick this).
+- **Selected** - choose specific tax IDs from your PMS catalog.
+
+When you pick Selected, the wizard shows a checklist of every tax PX has on file. Tick the ones Airbnb remits.
+
+## Step 4 - custom taxes (optional)
+
+Airbnb sometimes remits a tax that does not exist as a separate line in your PMS catalog. The custom taxes step lets you record those:
+
+- **Name** - the tax name as Airbnb labels it (`Florida Surtax`, `City Tourism Levy`).
+- **Rate** - the rate Airbnb applies.
+
+Custom taxes are stored only on the remittance record - they do not appear in your account-level taxes. They exist purely so PX knows to expect them on Airbnb bookings and not flag the difference.
+
+## How an audit applies remittance
+
+For each Airbnb booking:
+
+1. Is there a remittance record for this account? If no, do nothing - audit normally.
+2. Does this booking's listing fall under the remittance scope (all or selected)?
+3. For each tax PX would normally check:
+   - Is the tax in the remitted list?
+   - If yes, **skip** the check on this booking.
+4. For each custom tax:
+   - Treat it as expected on this booking. PX no longer flags an `UNEXPECTED_TAX` for it.
+
+## Common setups
+
+**Single jurisdiction, full remittance.** Yes / All listings / All taxes. The simplest setup - Airbnb collects and remits everything for every listing.
+
+**Multi-state PMC.** Yes / Selected listings / Selected taxes. Group listings by state into exceptions, then specify which taxes Airbnb remits per group.
+
+**Hybrid.** Yes / All listings / Selected taxes. Airbnb remits state lodging tax for all listings, but city-level taxes are still your responsibility.
+
+## When to update the wizard
+
+Update the wizard whenever:
+
+- A new state or county is added where Airbnb remits.
+- Airbnb changes its remittance behavior (this happens occasionally - watch for sudden spikes in `MISSING_TAX` findings on Airbnb bookings).
+- You add a listing in a new jurisdiction.
+- A tax that used to be remitted is now your responsibility (or vice versa).
+
+There is no audit re-run requirement after updating - the next audit you run automatically picks up the new remittance configuration.
+
+## Validation rules
+
+- Each listing can appear in **at most one** exception.
+- Custom taxes need both a name and a rate. Empty values are rejected.
+- The wizard always saves as a single record per account - there is one Airbnb remittance record at any time.

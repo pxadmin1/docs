@@ -1,0 +1,90 @@
+---
+title: "Billing & subscription"
+description: "Add a payment method, replace one, or remove the card or bank account on file."
+---
+
+PX uses Stripe for billing. Adding a payment method opens Stripe Checkout in a new tab; PX never sees raw card or bank details.
+
+## Adding a payment method
+
+1. Open **Settings**.
+2. Find the **Billing & Subscription** card.
+3. Click **Add Payment Method**.
+
+A new tab opens with Stripe Checkout. Pick the payment type (card or US bank account) and enter the details:
+
+- **Card** - card number, expiry, CVC. PX accepts Visa, Mastercard, Amex, Discover.
+- **Bank account** - routing number, account number. ACH transactions take 3-5 business days to clear.
+
+After Stripe confirms the payment method, you are returned to PX. The Billing card now displays the saved method.
+
+<Frame caption="Billing card with method on file">
+  ![Billing card](/images/screenshots/billing-card.png)
+</Frame>
+
+## Replacing a payment method
+
+To swap one card for another:
+
+1. Click **Remove** on the current method.
+2. Click **Add Payment Method**.
+3. Enter the new details in Stripe Checkout.
+
+There is no direct "edit" path - removing and re-adding is the supported flow. This keeps tokenization clean and avoids stale tokens at Stripe.
+
+## Removing a payment method
+
+Click **Remove** on the Billing card. PX:
+
+- Detaches the payment method from your Stripe customer record.
+- Updates the card to show *No payment method*.
+
+After removal, future invoices will fail to charge until you add a new method. PX will send reminder emails.
+
+## What gets charged
+
+PX bills monthly based on:
+
+- Your subscription plan.
+- (For metered plans) the number of properties under management during the month.
+
+Invoices are generated at the start of each billing cycle and charged automatically against the saved payment method. You can view invoices and receipts in your Stripe customer portal (link sent via email after payment).
+
+## Webhook reliability
+
+PX listens for Stripe webhooks to keep billing state in sync. The most common events processed:
+
+- `payment_intent.succeeded` - payment confirmed.
+- `payment_intent.payment_failed` - payment declined.
+- `customer.updated` - email or other details changed.
+- `setup_intent.succeeded` - new payment method saved.
+
+If a webhook is delayed (rare), the Billing card may briefly show stale state. Refresh the page to force a re-fetch.
+
+## Failed payments
+
+When a charge fails:
+
+- PX retries automatically per Stripe's smart retry logic.
+- You receive an email with the failure reason and a link to update your payment method.
+- Repeated failures eventually pause the account - you will not be locked out, but new audits and report generation may be disabled until billing is current.
+
+## Receipts
+
+Stripe emails receipts after every successful charge. To resend a receipt:
+
+1. Open Stripe's billing portal (link in any prior receipt email).
+2. Find the invoice.
+3. Click **Email receipt**.
+
+You can also view all invoices and download PDFs from the portal.
+
+## Test cards (for sandbox accounts)
+
+If you are on a PX sandbox or trial:
+
+- **Success** - `4242 4242 4242 4242`
+- **Requires 3DS authentication** - `4000 0025 0000 3155`
+- **Declined** - `4000 0000 0000 0002`
+
+Use any future expiry and any 3-digit CVC. These are Stripe test cards - they only work in sandbox mode.

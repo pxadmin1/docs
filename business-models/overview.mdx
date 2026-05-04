@@ -1,0 +1,66 @@
+---
+title: "Business models overview"
+description: "What a business model represents and the parts that make one up."
+---
+
+A **business model** is PX's representation of your management agreement with the property owner. It tells PX how to translate raw PMS data into:
+
+- The **net rental income** you book as revenue.
+- The **commission** you take, including special rules for canceled bookings.
+- The **trust account** postings (cleaning, linen, maintenance, insurance, owner taxes, and so on).
+- Which **taxes** the PMC remits versus the owner.
+
+Without a business model, audits still run at the data-integrity level (revenue integrity, payment anomalies, charge splits). Ledger balance and owner statement reconciliation findings only fire when a business model is assigned.
+
+## The three parts of a business model
+
+<CardGroup cols={3}>
+  <Card title="Net rental income" icon="trending-up" href="/business-models/net-rental-income">
+    Which fees count as income vs expense.
+  </Card>
+  <Card title="Commission" icon="percent" href="/business-models/commission">
+    Confirmed and canceled rates, recognition, channel overrides.
+  </Card>
+  <Card title="Trust account" icon="banknote" href="/business-models/trust-account">
+    Recurring income and expense charges with PMC vs owner allocation.
+  </Card>
+</CardGroup>
+
+## Status lifecycle
+
+A business model moves through four statuses:
+
+- **Draft** - work in progress. Diagnostics are deferred. Cannot be assigned to a property until activated.
+- **Active** - fully assigned and used by audits. The first transition from draft to active triggers a diagnostics batch run for every assigned property.
+- **Inactive** - all property assignments removed. The model still exists; you can re-activate or duplicate it.
+- **Archived** - hidden from the default list but kept for history and audit log integrity.
+
+## Versioning
+
+Editing the `pmc_config` of an active business model creates a **new version** of the model automatically. Old versions are immutable, so:
+
+- An audit run against a reservation always uses the version that was active on the reservation's check-in date.
+- Past results stay reproducible even after you update the model.
+- A `parent_id` chains versions together so you can browse history.
+
+A version bump triggers re-diagnostics for every assigned property so findings reflect the new rules going forward.
+
+## Anatomy of a model
+
+| Field | Required | Meaning |
+|---|---|---|
+| `name` | Yes | Display name. |
+| `description` | No | Free-text notes. |
+| `activation_date` | Yes (to run audits) | The date this model becomes effective. Earlier reservations use the prior model. |
+| `status` | Yes | draft / active / inactive / archived. |
+| `version` | Auto | Increments on each meaningful edit. |
+| `pmc_config.net_rental_income` | No | Income items, expense items, excluded items. |
+| `pmc_config.commission_setup` | No | Confirmed, canceled, and minimum commission rules. |
+| `pmc_config.trust_account_setup` | No | Recurring income and expense charges. |
+| `assigned_listings_count` | Auto | Number of properties using this model. |
+
+## Where to start
+
+If this is your first model, walk through [Create a business model](/business-models/create). It uses a six-step wizard that explains each section as you go.
+
+If you already have one model and want to add another, you can either start fresh or **duplicate** an existing model from the list view and edit the copy.

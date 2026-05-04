@@ -1,0 +1,63 @@
+---
+title: "Auto-fix"
+description: "How auto-fix resolves issues automatically and when to leave it off."
+---
+
+Auto-fix is PX's automatic resolution of safe-to-fix findings. When it is on for a property, PX moves unresolved findings into a queue and resolves them in the background.
+
+## Where the toggles live
+
+- **Per-property** - the **Auto-Fix** column in the Properties table, and the toggle on the property detail page header.
+- **Globally** - the **Auto-fix all** toggle in the Properties table card header. Flipping this updates every property in your account at once.
+
+The two layers are stored together: flipping global on sets every property to on. Flipping global off does the same in reverse. After that, you can fine-tune per-property.
+
+## What changes when auto-fix is on
+
+On the property detail Overview tab:
+
+- Unresolved findings show a **Fix in Progress** badge.
+- The **Start Fix** and **Dismiss** buttons are not shown.
+- The help text reads: *"Auto-fix is enabled. Issues will be processed automatically."*
+
+On the Properties table:
+
+- The **In Progress** column shows the count of findings PX is processing for that property.
+- The **Auto-Fix** column shows the toggle in its on state.
+
+## What auto-fix actually does
+
+Auto-fix resolves findings that are deterministic and safe - the kind of issue with a single correct outcome. Examples include:
+
+- Marking a clearly fixed issue as resolved when a follow-up reservation update made it whole.
+- Closing duplicate findings that point to the same underlying issue.
+- Re-running checks after a PMS configuration change to clear obsolete findings.
+
+Auto-fix does **not** modify your PMS. PX is read-only against Guesty and OwnerRez. Auto-fix only updates the PX-side issue status.
+
+## When to leave auto-fix off
+
+Leave it off if:
+
+- You are still onboarding and want a human to review each finding the first time around.
+- You are running a one-time clean-up across historical bookings and want to triage manually.
+- You want a per-finding audit trail that shows every Start Fix or Dismiss action.
+
+You can always start with auto-fix off, work through findings manually for a couple of weeks, and flip it on once the cadence is comfortable.
+
+## Manual flow (auto-fix off)
+
+For each unresolved finding on the property detail Overview tab:
+
+- Click **Start Fix** to mark it in progress. PX records the timestamp and (where applicable) the fix details.
+- Click **Dismiss** to close the finding without fixing. Use this for false positives or bookings outside the audit scope.
+
+Both actions are reversible - opening the issue and toggling status updates the audit log.
+
+## Visibility
+
+Open the **Home** dashboard to see an aggregate view of how auto-fix is doing across the portfolio:
+
+- **Issues by Status** - donut chart of unresolved / in progress / fixed / dismissed.
+- **Issues Trend (14 days)** - detected vs fixed lines over time.
+- **Properties Needing Attention** - listings with the most unresolved findings.

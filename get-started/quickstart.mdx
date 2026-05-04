@@ -1,0 +1,104 @@
+---
+title: "Quickstart"
+description: "Connect your PMS, sync properties, and run your first audit in under 15 minutes."
+---
+
+This walkthrough takes you from a fresh account to a complete audit in five steps. Set aside about 15 minutes the first time.
+
+<Steps>
+  <Step title="Sign in to PX Accounting">
+    Open [app.pxaccounting.com](https://app.pxaccounting.com) and sign in. Use Google, Microsoft, or email - whichever you registered with.
+
+    First-time visitors are taken straight to **Settings** because PX needs a PMS connection before it can do anything useful.
+  </Step>
+
+  <Step title="Connect your PMS">
+    On the **Settings** page, find the **PMS Connection** card and pick your provider:
+
+    - **Guesty** - paste a Client ID and Client Secret. See [Connect Guesty](/integrations/connect-guesty) for how to generate them.
+    - **OwnerRez** - click **Connect with OwnerRez** to start OAuth. See [Connect OwnerRez](/integrations/connect-ownerrez).
+
+    Once connected, the **Integration Status** panel below the connection card shows green lights for Admin, OAuth, and Webhook.
+
+    <Frame caption="PMS Connection card with provider options">
+      ![PMS Connection](/images/screenshots/settings-pms-connection.png)
+    </Frame>
+  </Step>
+
+  <Step title="Sync your properties">
+    Open the **Properties** page from the sidebar. If this is your first visit and credentials are configured, PX automatically triggers a sync from your PMS.
+
+    You can also click **Sync from Guesty** (or **Sync from OwnerRez**) at any time to re-pull the property list. Each row shows the property name, type, status, business model assignment, and unresolved issue count.
+
+    <Frame caption="Properties list after first sync">
+      ![Properties list](/images/screenshots/properties-list.png)
+    </Frame>
+  </Step>
+
+  <Step title="Configure taxes (and Airbnb remittance)">
+    Open **Tax Configuration**. PX reads the taxes you have set up in your PMS and shows them in two tabs:
+
+    - **Account-level** - taxes that apply to every listing.
+    - **Per-listing** - listings grouped by whether they inherit account taxes or override them.
+
+    Most users only need to do two things on this page:
+
+    1. **Set channel sync overrides** if a tax should not sync to specific channels (Airbnb, Booking.com, etc.). PX uses these overrides during audits.
+    2. **Run the Airbnb remittance wizard** to tell PX which taxes Airbnb collects on your behalf. Findings for Airbnb-remitted taxes are suppressed once configured.
+
+    Read [Tax Configuration overview](/tax-configuration/overview) before changing anything in production.
+  </Step>
+
+  <Step title="(Optional) Build a business model">
+    Business models are how PX maps PMS data to your trust accounting setup. They are required for ledger balance and owner statement reconciliation findings.
+
+    Open **Business Models**, click **Create Business Model**, and walk through the wizard:
+
+    1. **Template** - start blank or from a sample.
+    2. **Basic info** - name, description, activation date.
+    3. **Net rental income** - which fees count as revenue vs expense.
+    4. **Commission** - confirmed and canceled rates, recognition rules.
+    5. **Trust account** - recurring income and expense charges.
+    6. **Review** - assign properties.
+
+    See [Create a business model](/business-models/create) for the full walkthrough.
+  </Step>
+
+  <Step title="Run your first audit">
+    Open the **Audits** page.
+
+    - Pick a **start date** and **end date** (the range cannot exceed 62 days).
+    - Optionally pick one **listing** (or leave as "All Listings").
+    - Click **Generate Audit**.
+
+    PX queues a background job and shows a progress card. When it finishes you see:
+
+    - Three summary cards: **Reservations Audited**, **Issues Found**, **Verdict**.
+    - A results table - one row per reservation, expandable to show line items and findings.
+    - A **Findings Breakdown** card with counts by finding type.
+    - A **Download Report** button to export a PDF.
+
+    Read [Run an audit](/audit/run-an-audit) for what each finding type means.
+
+    <Frame caption="Audit results">
+      ![Audit results](/images/screenshots/audit-results.png)
+    </Frame>
+  </Step>
+</Steps>
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Understand findings" icon="search" href="/audit/understanding-findings">
+    Severity, expected vs actual, and what each finding means.
+  </Card>
+  <Card title="Build a financial report" icon="chart-line" href="/reports/financial-report">
+    Reservation-level revenue with custom columns and CSV export.
+  </Card>
+  <Card title="Add a payment method" icon="credit-card" href="/account/billing">
+    Add a card or bank account to keep your subscription active.
+  </Card>
+  <Card title="Configure the rest of Settings" icon="settings" href="/account/settings">
+    Timezone, integration status, and account preferences.
+  </Card>
+</CardGroup>

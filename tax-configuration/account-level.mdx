@@ -1,0 +1,71 @@
+---
+title: "Account-level taxes"
+description: "Read-only view of taxes that apply to every property in your PMS account."
+---
+
+The **Account-level** tab on the Tax Configuration page shows taxes configured at the account level in your PMS. These are the taxes that apply to every property unless a listing-level override exists.
+
+This view is **read-only**. To change a rate or applicability rule, change it in your PMS and then click **Refresh from PMS** in PX.
+
+<Frame caption="Account-level taxes tab">
+  ![Account-level taxes](/images/screenshots/tax-config-account.png)
+</Frame>
+
+## Per-PMS behavior
+
+### Guesty
+
+- The Account-level tab shows the **Account Taxes** section with one row per tax.
+- Each row reports name, percent, applicability rules, and is_inclusive flag.
+- Help text: *"Read-only view of taxes configured in your PMS."*
+- Click **Refresh from PMS** at the top of the page to re-fetch.
+
+### OwnerRez
+
+- The Account-level tab renders the **OwnerRez Catalog** filtered to `kind = tax`.
+- Tax rates are **inferred** from booking history and confirmed by you.
+- See [OwnerRez Catalog](/pms-configuration/ownerrez-catalog) for details on the catalog UI.
+
+## What each field means
+
+| Field | Meaning |
+|---|---|
+| **Name** | Display label for the tax (`Lodging Tax 8%`, `City Hotel Tax`, `VAT`, etc.). |
+| **Percent** | The tax rate. |
+| **Applies to** | Categories the tax applies to (`ACCOMMODATION_FARE`, `CLEANING_FEE`, custom fees). Empty list means accommodation only. |
+| **Applies to channels** | OTA channels where this tax syncs. Defined in your PMS. |
+| **Is inclusive** | If true, the tax is priced into the accommodation rate (the guest sees the tax-inclusive price). If false, the tax is added on top. |
+| **Stay-length filter** | Some taxes only apply to short stays (< 30 nights). Configured in your PMS. |
+
+PX displays these fields when your PMS exposes them. Guesty exposes most; OwnerRez exposes them only when you have entered them into the catalog.
+
+## The "applies to" list
+
+The most common configuration is:
+
+- **Lodging tax** - applies to `ACCOMMODATION_FARE` only.
+- **Sales tax** - applies to `ACCOMMODATION_FARE` and `CLEANING_FEE`.
+- **Resort fee tax** - applies to `RESORT_FEE`.
+
+Empty `applies_to` means the tax applies to accommodation only (not to fees).
+
+## Listings inheriting vs overriding
+
+The Account-level tab shows the account defaults. Some listings may have **listing-level overrides** that take precedence. Those are listed under the Per-listing tab, grouped by inheritance state.
+
+See [Per-listing taxes](/tax-configuration/per-listing) for the listing-level view.
+
+## Validation warnings
+
+PX surfaces a few warnings if it detects PMS configuration patterns that commonly cause issues:
+
+- **Booking.com tax compatibility** - Booking.com only supports certain tax structures, and Guesty's UI does not always enforce that. PX warns when a tax is configured in a way that Booking.com will not honor.
+- **Inclusive vs exclusive ambiguity** - if multiple taxes apply to the same fee with mixed inclusivity, PX flags it because the math is brittle.
+
+Warnings appear inline next to the affected row.
+
+## Refreshing
+
+Click **Refresh from PMS** at the top of the page to re-fetch the latest tax configuration. PX updates its mirror in place.
+
+If a refresh fails, you will see an error banner with the cause - most often a transient PMS rate limit or an expired credential.

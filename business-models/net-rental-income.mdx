@@ -1,0 +1,65 @@
+---
+title: "Net rental income"
+description: "Choose which fees count as income and which count as expenses."
+---
+
+Net rental income is the figure your owner statements report as **revenue**. The Net Rental Income section of a business model is where you tell PX which line items roll into that figure and which roll out.
+
+## How it works
+
+For every reservation, PX iterates over every charge line. For each line:
+
+- If the line's **category** appears in **income items**, the amount adds to net rental income.
+- If the line's category appears in **expense items**, the amount subtracts from net rental income.
+- Otherwise the line is **excluded** - PX still tracks it for accounting integrity but does not change net rental income.
+
+The categories you check here come from your PMS configuration plus PX's standard buckets (accommodation, cleaning, pet fee, extra guest, refunds, and so on).
+
+## The fields
+
+### Income items
+
+Check every category that should add to revenue. Typical entries:
+
+- Accommodation fare
+- Cleaning fee (when the PMC retains it as revenue)
+- Pet fee
+- Extra guest fee
+- Early check-in / late check-out
+- Resort fees that you pass to the owner
+
+### Expense items
+
+Check categories that should subtract from revenue. Typical entries:
+
+- Refunds
+- Promotional discounts you absorb
+- OTA service fees you reimburse
+- Channel processing fees passed through
+
+### Excluded items
+
+Anything not checked above. PX shows them in an expandable list with a per-item config so you can document why they are excluded - for example, security deposits which are held in trust and never recognized.
+
+## Examples
+
+**Standard 20% short-term rental management.** Income: accommodation, cleaning, pet fee. Expenses: refunds, channel commission. Excluded: security deposit, processing fees passed to the owner.
+
+**Cleaning kept by the cleaner.** Treat cleaning as **excluded** so it never shows on the owner statement. The cleaner invoices the owner directly outside PX.
+
+**Resort fee passed entirely to the owner.** Resort fee in income items, paired with a matching trust account expense charge so the net effect on the owner statement is zero.
+
+## Validation
+
+PX does not enforce mutual exclusion at the schema level - you can technically check a category in both buckets - but doing so produces an inconsistent ledger. The audit will flag a `LEDGER_BALANCE_MISMATCH` finding if it cannot reconcile.
+
+If you are unsure, it is safer to:
+
+1. Mark a category as **income** by default.
+2. Add a corresponding **expense** trust account charge if you also need to subtract it.
+
+That way the income and expense are separate journal lines and easy to audit.
+
+## Editing safely
+
+Changing income/expense membership creates a new version of the model. Reservations on or after the new version's effective date pick up the change; earlier reservations continue using the prior version. There is no downtime and no risk to historical audit results.

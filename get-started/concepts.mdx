@@ -1,0 +1,108 @@
+---
+title: "Key concepts"
+description: "How properties, business models, taxes, and audits fit together in PX Accounting."
+---
+
+A short tour of the words you will see across PX Accounting and how each piece relates to the others.
+
+## Property
+
+A **property** (sometimes called a **listing**) is a single rentable unit. Properties live in your PMS - PX syncs them in and stores the canonical fields you need:
+
+- Name, address, thumbnail.
+- Bedrooms, bathrooms, accommodates, property type.
+- Base nightly rate and cleaning fee (Guesty only - OwnerRez does not expose these).
+- Active/inactive status.
+- The owner record (when one is mapped in your PMS).
+- The business model assigned to it.
+- An **auto-fix** toggle.
+
+You can also add properties manually from the Properties page if you have something off-PMS, but the typical flow is sync from PMS.
+
+## Business model
+
+A **business model** is PX's representation of your management agreement with the owner. It tells PX how to translate raw PMS data into accounting postings:
+
+- Which fees count as **net rental income** vs expenses.
+- The **commission rate** (confirmed and canceled bookings can have different rules) and when it is recognized (check-in, check-out, or daily).
+- Optional **owner taxes** on commission, in jurisdictions that require them.
+- **Recurring charges** in the trust account - cleaning, linen, maintenance, insurance, and so on - with PMC vs owner allocation.
+- **Tax remittance** behavior, including which taxes the PMC remits and which the owner remits.
+
+Properties without a business model still get audited at the data-integrity level, but ledger balance and owner statement findings only run when a model is assigned.
+
+Business models are **versioned**. Editing an active model creates a new version automatically; old versions are preserved so audit history stays consistent.
+
+## Tax configuration
+
+Tax configuration in PX has three independent layers:
+
+1. **PMS mirror (read-only).** PX shows the taxes configured on your PMS account and per listing. You change these in your PMS, not in PX.
+2. **Channel sync overrides (user-writable).** Per-tax, per-channel toggles to tell PX which channels a tax actually syncs to. Used during audits to decide whether to expect a tax on a given booking.
+3. **Airbnb tax remittance (user-writable).** A four-step wizard that records which taxes Airbnb collects and remits on your behalf. Findings for those taxes are suppressed on Airbnb bookings.
+
+OwnerRez has no tax read API, so the OwnerRez catalog (under PMS Configuration) is the source of truth instead - taxes are inferred from your booking history and you confirm or edit them.
+
+## Audit
+
+An **audit** is a run of PX's diagnostic checks across a date range and (optionally) a single listing. PX queues a background job, then returns:
+
+- A **summary** - reservations audited, issues found, and a verdict (clean, underpaid, overpaid).
+- A list of **reservations** with their charges and findings.
+- A **findings breakdown** by finding type.
+
+Each **finding** has:
+
+- A **severity** - error, warning, or info.
+- A **type** - missing tax, fee mismatch, payment anomaly, etc.
+- An **expected** and **actual** amount.
+- A **reasoning** string that explains the formula PX used.
+- A **source** indicating which configuration the expectation came from.
+
+Audits do not modify your PMS. They are read-only diagnostics.
+
+## Auto-fix
+
+**Auto-fix** is PX's automatic resolution of issues that are safe to fix without a human review. You can toggle it:
+
+- **Globally** from the Properties page - the toggle in the table header applies to every property.
+- **Per property** - the toggle on each row, or on the property detail page, controls just that listing.
+
+When auto-fix is on for a property, unresolved issues show **Fix in Progress** instead of **Start Fix** / **Dismiss** buttons. PX processes them in the background.
+
+## How PMS data flows in
+
+```
+PMS (Guesty / OwnerRez)
+    |
+    | OAuth or API key
+    v
+Settings -> PMS Connection
+    |
+    | Sync triggered
+    v
+Properties + Reservations + Charges + Payments
+    |
+    v
+Audit (against business model + tax config + PMS catalog)
+    |
+    v
+Findings -> Property detail / Audit page / Reports
+```
+
+For Guesty, the accounting engine runs inside Guesty - PX reads journal entries from there. For OwnerRez, PX builds the ledger from charges, payments, refunds, and deposits because OwnerRez has no built-in accounting. Audit logic is the same either way; only the data source differs.
+
+## Where each concept lives in the UI
+
+| Concept | Page | Notes |
+|---------|------|-------|
+| Property | **Properties** (list and detail) | Click a row to drill in. |
+| Business model | **Business Models** | List, create, edit, version, assign. |
+| PMS tax mirror | **Tax Configuration** -> Account-level / Per-listing | Read-only; reflects your PMS. |
+| Channel sync override | **Tax Configuration** -> Per-listing | Toggle per tax, per channel. |
+| Airbnb remittance | **Tax Configuration** -> top wizard card | Singleton per account. |
+| OwnerRez catalog | **PMS Configuration** | Tax/fee/commission baseline. |
+| Audit | **Audits** | Run, results, PDF export. |
+| Findings | Property detail (per property) or Audits (across all) | |
+| Reports | **Reports** | Reservation-level financial report. |
+| Settings | **Settings** | PMS, timezone, billing, danger zone. |

@@ -1,0 +1,77 @@
+---
+title: "Audits overview"
+description: "What an audit does, what it checks, and how to read the results."
+---
+
+An **audit** is a one-shot diagnostic run across a date range. PX inspects every reservation in the range, compares it against your business model, your tax configuration, and your PMS catalog, then reports findings.
+
+Audits do not modify your PMS. They are read-only diagnostics.
+
+<CardGroup cols={2}>
+  <Card title="Run an audit" icon="play" href="/audit/run-an-audit">
+    Pick a date range, choose a listing, click Generate.
+  </Card>
+  <Card title="Understanding findings" icon="search" href="/audit/understanding-findings">
+    Severity, expected vs actual, config source, reasoning.
+  </Card>
+  <Card title="Check categories" icon="list" href="/audit/check-categories">
+    Every check PX runs by PMS.
+  </Card>
+  <Card title="Export PDF" icon="file-text" href="/audit/export-pdf">
+    Download a shareable audit report.
+  </Card>
+</CardGroup>
+
+## When to run an audit
+
+- **Period close** - run a 30-day or 60-day audit at the end of each accounting period.
+- **Owner statement prep** - run before sending statements to catch issues that affect payouts.
+- **After a configuration change** - changed a tax rate or commission percent? Audit the affected period to verify the new rules are applied.
+- **Onboarding a new owner / property** - audit recent history to validate the new business model.
+- **Investigation** - when a specific booking looks wrong, audit a narrow window with a listing filter.
+
+## What an audit returns
+
+A successful audit returns a structured response with three layers:
+
+### Summary
+
+- **Reservations Audited** - total bookings in scope.
+- **Issues Found** - reservations with at least one finding.
+- **Verdict** - one of `CLEAN`, `UNDERPAID`, `OVERPAID`. The verdict reflects the net financial direction.
+
+### Per-reservation results
+
+A table with one row per reservation:
+
+- Confirmation code (linked to the PMS where applicable).
+- Listing, guest, channel, status.
+- Number of findings.
+- Net discrepancy (positive when you under-collected, negative when you over-collected).
+
+Click a row to expand it - the expansion shows:
+
+- **Line items** - rent, fees, taxes, expenses on the booking.
+- **Findings** - the detailed list with severity, expected, actual, difference, source, and reasoning.
+
+### Findings breakdown
+
+A grid of finding types with counts. Click a type to filter the results table.
+
+## Constraints
+
+- The audit window cannot exceed **62 days**. For longer ranges, run multiple audits back to back.
+- The Generate button is disabled when:
+  - The range exceeds 62 days.
+  - Start date is after end date.
+  - You have not connected a PMS yet.
+
+## How long does an audit take?
+
+Depends on the number of reservations and the PMS:
+
+- A 30-day audit for 50 listings: typically 30-90 seconds.
+- A 62-day audit for 500 listings: typically 5-10 minutes.
+- OwnerRez audits are slightly faster because PX has more cached data.
+
+PX runs the audit in a background worker. The Audits page polls for status and displays an elapsed-time card while you wait. Feel free to navigate away - results stay tied to the audit ID.

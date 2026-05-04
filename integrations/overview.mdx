@@ -1,0 +1,60 @@
+---
+title: "PMS integrations overview"
+description: "How PX Accounting connects to Guesty and OwnerRez, what gets synced, and the differences to be aware of."
+---
+
+PX Accounting connects to one PMS at a time. The connection lives on the **Settings** page under **PMS Connection**.
+
+<CardGroup cols={2}>
+  <Card title="Connect Guesty" icon="plug" href="/integrations/connect-guesty">
+    OAuth-based connection. Reads listings, reservations, journal entries, and the full fee/tax/commission catalog.
+  </Card>
+  <Card title="Connect OwnerRez" icon="plug" href="/integrations/connect-ownerrez">
+    OAuth-based connection. Reads listings, bookings, payments, refunds, and deposits. Tax/fee/commission catalog is built from booking history.
+  </Card>
+</CardGroup>
+
+## Side-by-side
+
+| Capability | Guesty | OwnerRez |
+|---|---|---|
+| Connection type | OAuth (Client ID + Client Secret) | OAuth (one-click) |
+| Listings | Synced | Synced |
+| Reservations / bookings | Synced on demand | Synced on demand |
+| Per-charge breakdown | Yes | Yes (richer per-line) |
+| Built-in accounting engine | Yes - PX reads journal entries directly | No - PX builds the ledger from charges, payments, refunds, deposits |
+| Account-level tax read API | Yes | No - inferred from booking history |
+| Per-listing tax read API | Yes | No - inferred from booking history |
+| Channel commission read API | Yes | No - inferred from booking history |
+| Webhooks | Yes - reservation and listing events | Yes - booking events |
+| Base nightly rate visible in UI | Yes | No (column hidden) |
+
+## What gets synced
+
+The first time you sync, PX pulls:
+
+- **Properties** - one record per listing, including name, address, thumbnail, capacity, and active/inactive flag.
+- **Owners** (when present in the PMS) - mapped to properties so you can see the owner inline on each property.
+
+Reservations and financial data are fetched **on demand** when you open a property's Reservations tab, generate a report, or run an audit. PX caches some pieces (Guesty journal entries for 30 days; OwnerRez payments, refunds, and deposits permanently) so audits run without hitting your PMS rate limit on every refresh.
+
+## Webhooks
+
+PX registers webhooks with your PMS at connection time so changes (new bookings, cancellations, listing updates) flow in without waiting for the next sync. You can verify webhook health on the **Integration Status** panel under Settings.
+
+## Configuration data: read vs inferred
+
+This is the biggest practical difference between the two integrations:
+
+- On Guesty, you configure taxes and fees in Guesty itself. PX shows them read-only in **Tax Configuration** and **PMS Configuration**. To change a rate, change it in Guesty and click **Refresh from PMS** in PX.
+- On OwnerRez, there is no API to read taxes, surcharges, or commissions. PX scans your booking history and *infers* a catalog. You then **confirm** or **edit** entries in the **PMS Configuration** -> **OwnerRez Catalog**. Audits use this confirmed catalog as the source of truth.
+
+If you skip catalog confirmation on OwnerRez, audits short-circuit with a single `CATALOG_EMPTY` finding instead of running per-reservation checks.
+
+## Switching PMSes
+
+PX supports one active PMS per account. Switching providers requires deleting the existing credentials from **Settings** before connecting a new one. Historical data tied to the old PMS stays in place; new syncs start populating against the new provider.
+
+## Rate limits
+
+PX respects PMS rate limits. If you hit one (most common when generating large financial reports), the UI shows a 429 banner with a countdown - the **Generate Report** button is disabled until the cooldown finishes.

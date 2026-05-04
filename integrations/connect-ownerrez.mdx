@@ -1,0 +1,110 @@
+---
+title: "Connect OwnerRez"
+description: "Authorize PX Accounting with OwnerRez and build your audit baseline catalog."
+---
+
+OwnerRez uses a one-click OAuth flow. There is nothing to copy and paste - you click a button in PX, sign in to OwnerRez, and grant access.
+
+## Before you start
+
+You will need:
+
+- An OwnerRez account with API access enabled (most plans include this; contact OwnerRez support if API is locked).
+- An owner-level login - sub-users may not have permission to authorize third-party apps.
+
+## Step 1 - authorize PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **OwnerRez**.
+3. Click **Connect with OwnerRez**.
+4. Sign in to OwnerRez when prompted.
+5. Review the permissions and click **Allow**.
+
+OwnerRez redirects you back to PX. The **Integration Status** panel now shows green lights for **Admin**, **OAuth**, and **Webhook**.
+
+<Frame caption="OwnerRez connected">
+  ![OwnerRez connected](/images/screenshots/settings-ownerrez-connected.png)
+</Frame>
+
+## Step 2 - sync properties
+
+1. Open **Properties** in the sidebar.
+2. Click **Sync from OwnerRez**.
+
+PX pulls your full property list, including each property's owner mapping. The Properties table omits the **Base Nightly Rate** column for OwnerRez accounts because OwnerRez does not expose a single base rate - rates vary by season and stay length.
+
+## Step 3 - build the OwnerRez catalog
+
+This step is unique to OwnerRez. **You must do it before audits return useful results.**
+
+OwnerRez has no API to read your tax, surcharge, or commission setup. Instead, PX:
+
+1. Scans your last 18 months of bookings.
+2. Infers a catalog of taxes, fees, and commission rates from the line items it sees.
+3. Asks you to confirm each entry.
+
+To do this:
+
+1. Open **PMS Configuration** in the sidebar.
+2. The **OwnerRez Catalog** loads with inferred entries marked `inferred`.
+3. Click **Detect from bookings** if you want PX to (re-)scan history.
+4. Walk through each row and:
+   - Click **Confirm** if the inferred rate matches what you actually charge.
+   - **Edit** the rate, unit (percent vs fixed), or applicability scope if needed.
+   - Click **Add row** for any tax or fee PX did not pick up.
+   - **Archive** entries that are out of date.
+
+Entries can be in one of four statuses:
+
+- **inferred** - PX detected this from booking history. Not yet used by audits.
+- **user-added** - you created it manually.
+- **confirmed** - reviewed and approved. Used by audits.
+- **archived** - hidden, not used.
+
+Audits use **confirmed** and **user-added** rows only. If the catalog is empty, audits short-circuit with a `CATALOG_EMPTY` finding instead of running.
+
+See [OwnerRez Catalog](/pms-configuration/ownerrez-catalog) for the full UI walkthrough.
+
+<Tip>
+  Where do you actually configure these rates? On OwnerRez itself - **Settings -> Taxes** (account-wide), **Settings -> Surcharges** (fees), and **Property Management -> Setup & Configuration** (owner commissions). PX's catalog is your audit baseline; OwnerRez is the system of record.
+</Tip>
+
+## What PX reads from OwnerRez
+
+| Data | When fetched |
+|---|---|
+| Properties | On sync |
+| Bookings | On demand (property detail, Reports, Audits) |
+| Charges (per booking) | On demand |
+| Payments, refunds, deposits | Cached as ingested; webhooks update them in real time |
+| Owner records | On owner sync |
+| Catalog (taxes, fees, commissions) | Inferred from booking history; you confirm |
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. This revokes the OAuth token, unregisters webhooks, and leaves your existing PX data in place.
+
+## Troubleshooting
+
+**OAuth pop-up does not return to PX.**
+Pop-up blockers are a common cause. Allow pop-ups for `app.pxaccounting.com` and try again.
+
+**Webhook status is red.**
+OwnerRez may have rejected the webhook URL. Verify your OwnerRez plan includes webhook access and click **Refresh**.
+
+**Audits return no results.**
+The OwnerRez catalog is probably empty. Open **PMS Configuration**, run **Detect from bookings**, and confirm at least the taxes and any commission rules you charge.
+
+**A booking has no inferred catalog rules.**
+This is expected for one-off charges (cleaning fee on a single trip, manual adjustment). PX only infers rules that repeat. Add custom rows in the catalog for anything systematic.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="OwnerRez Catalog" icon="list-checks" href="/pms-configuration/ownerrez-catalog">
+    Confirm and edit the audit baseline.
+  </Card>
+  <Card title="Run an audit" icon="circle-check" href="/audit/run-an-audit">
+    Once the catalog is confirmed, run your first audit.
+  </Card>
+</CardGroup>

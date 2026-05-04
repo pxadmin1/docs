@@ -1,0 +1,42 @@
+---
+title: "Tax remittance"
+description: "How the business model decides which taxes the PMC remits versus the owner."
+---
+
+Tax remittance configuration in a business model controls which taxes the PMC is responsible for remitting. PX uses this to assign tax liability lines on the owner statement and during audits.
+
+This is **separate** from Airbnb tax remittance, which lives on the Tax Configuration page and tracks marketplace-collected taxes. Read [Airbnb tax remittance](/tax-configuration/airbnb-remittance) for that.
+
+## Two responsibility buckets
+
+- **PMC-remitted taxes** - the management company collects, holds, and remits to the authority. The owner sees a tax-collected line on their statement and a separate remittance to the authority.
+- **Owner-remitted taxes** - PX still tracks the tax for transparency, but the owner is responsible for remitting. The owner's payout includes the tax amount; remittance happens off-platform.
+
+A typical short-term rental setup has the PMC remit occupancy taxes and the owner remit any income tax on net rental income.
+
+## Recognition
+
+For each remittance bucket you can specify:
+
+- **Recognition date** - when the liability is recognized in the GL. Common choices are `check_in`, `check_out`, or `accommodation_recognition_date` (matches whatever recognition you use for accommodation revenue).
+
+Matching tax recognition to accommodation recognition is the most common setup because it keeps tax liability in the same period as the revenue that triggered it.
+
+## How this connects to Tax Configuration
+
+PX maintains tax rates and applicability rules under **Tax Configuration**. Those rates are read from your PMS (Guesty) or maintained in the OwnerRez catalog. The business model layer answers a different question: **once the tax exists, who remits it?**
+
+So the flow is:
+
+1. **Tax exists** - configured in the PMS (Guesty) or in the OwnerRez catalog.
+2. **Sync settings** - **Tax Configuration -> channel overrides** decide whether the tax syncs to a given channel.
+3. **Marketplace remittance** - **Tax Configuration -> Airbnb remittance** decides whether Airbnb collects it on your behalf.
+4. **PMC vs owner remittance** (this page) - decides who is on the hook for what is left.
+
+## Audit findings related to tax remittance
+
+- **TAX_AMOUNT_MISMATCH** - the recorded tax does not match what the business model computed.
+- **MISSING_TAX** - PX expected a tax based on the PMS configuration but the booking does not have one.
+- **UNEXPECTED_TAX** - the booking has a tax PX cannot map to your configuration.
+
+A finding includes a `config_source` field that tells you whether the expected value came from the PMS catalog, the channel override layer, or the business model's remittance configuration. This is useful when debugging "why did PX expect this amount?"

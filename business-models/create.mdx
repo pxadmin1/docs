@@ -1,0 +1,125 @@
+---
+title: "Create a business model"
+description: "Walk through the six-step wizard to build a new business model."
+---
+
+Open **Business Models** in the sidebar and click **Create Business Model** to launch the wizard.
+
+<Frame caption="Business Models list">
+  ![Business Models list](/images/screenshots/business-models-list.png)
+</Frame>
+
+## Step 1 - template
+
+Pick a starting point:
+
+- **Blank** - empty model. Best when your management agreement is unusual.
+- **Sample (recommended)** - sensible defaults for a typical short-term rental management business. You can change anything afterward.
+
+## Step 2 - basic info
+
+| Field | What to enter |
+|---|---|
+| **Name** | A short label like `Standard Management 20%` or `Premium Trust 15%`. This shows on every property assigned to the model. |
+| **Description** | Optional. Note who this model is for or what makes it different. |
+| **Activation date** | The date the model takes effect. Audits and diagnostics for reservations on or after this date use this model; reservations before it use whatever model was active then (or none). |
+
+The model is created in **Draft** status. You will activate it at the end of the wizard.
+
+## Step 3 - net rental income
+
+Define which fees count as **income** vs **expense** for the purpose of net rental income.
+
+- **Income items** - check the items you want included in net rental income. Anything checked here adds to revenue when audits compute the income total.
+- **Expense items** - check the items you treat as deductions from gross revenue.
+- **Excluded items** (expandable) - everything else that PX detects but does not include in either bucket. Useful for refunds, security deposits, and pass-through fees.
+
+You can re-classify items any time - changing them creates a new version of the model.
+
+See [Net rental income](/business-models/net-rental-income) for the full field reference.
+
+## Step 4 - commission
+
+Two independent sub-sections plus minimums.
+
+### Confirmed reservations
+
+| Field | Meaning |
+|---|---|
+| **Enable** | Whether commission applies to confirmed bookings. Most PMCs leave this on. |
+| **Commission %** | The default rate (for example, `20`). |
+| **Recognition** | When commission revenue is recognized: `check_in`, `check_out`, or `nightly` (per-night spread). |
+| **Owner tax** | Optional - charges the owner an additional VAT/GST on top of commission. Specify name, category, and percent. |
+| **Channel conditions** | Override the default rate per channel. For example, Airbnb may settle at 18% while Vrbo is 22%. |
+
+### Canceled reservations
+
+| Field | Meaning |
+|---|---|
+| **Enable** | Whether you charge a commission on canceled bookings. |
+| **Commission %** | The rate for canceled bookings (often lower than confirmed). |
+| **Recognition** | `cancellation_date` or `original_check_in`. |
+| **Owner tax** | Same idea as confirmed. |
+| **Channel conditions** | Per-channel overrides. |
+
+### Minimum commission
+
+| Field | Meaning |
+|---|---|
+| **Enable** | Floor below which the calculated commission is bumped up. |
+| **Amount** | Numeric value. |
+| **Currency** | Defaults to USD. |
+
+See [Commission](/business-models/commission) for the full field reference.
+
+## Step 5 - trust account
+
+Add **income charges** and **expense charges** that recur on every reservation - cleaning fees, linen replenishment, maintenance reserves, owner-paid insurance, and so on.
+
+Each charge has:
+
+| Field | Meaning |
+|---|---|
+| **Name** | Display label. |
+| **Category** | Bucket for reporting. |
+| **Description** | Free text. |
+| **Amount type** | `Fixed` (you set the amount) or `Variable` (read from the PMS line item). |
+| **Amount** | Numeric value. |
+| **Per** | `stay` or `night`. |
+| **Recognition** | When the charge is recognized in the GL. |
+| **Allocation** | `vendor`, `owner`, or `both` - who is on the receiving side. |
+| **Vendor / owner value** | The split, in either percent or fixed amount. |
+| **Owner VAT/GST** | Optional - apply a VAT or GST on the charge. |
+| **Excluded channels** | Channels where this charge does **not** apply. |
+
+See [Trust account](/business-models/trust-account) for the full reference.
+
+## Step 6 - review and assign
+
+The final step shows a summary of every section. Two important actions live here:
+
+- **Activate** - flip status from Draft to Active. This is the moment audits start using the model.
+- **Assign properties** - open a property picker and select the listings this model governs. You can also do this later from the Business Models list.
+
+When you click **Save**, PX:
+
+1. Validates all required fields.
+2. Persists the model.
+3. If activated and assigned, queues a diagnostics run for every assigned property.
+
+## Editing later
+
+Open any model from the list to edit. Saving an active model with `pmc_config` changes creates a new version (the original stays in place for historical audits).
+
+You can also:
+
+- **Duplicate** - clone the model with `Copy` appended to the name. Use this for what-if scenarios.
+- **Deactivate** - unassign all listings and set status to Inactive.
+- **Archive** - hide from the default list. Reversible if you remove the Archived filter.
+
+## Common pitfalls
+
+- **Forgetting to set an activation date.** Without one, audits will not pick the model up. Set it on day one of the period the model covers.
+- **Duplicating instead of editing.** If you make a small rate change, edit and let PX version it - duplicate creates a parallel model that is not automatically reconciled with prior history.
+- **Activating without assigning properties.** Active + zero listings is allowed but does nothing useful. Assign before you walk away.
+- **Mixing income and expense items.** PX treats them as mutually exclusive. An item should appear in one bucket, not both.

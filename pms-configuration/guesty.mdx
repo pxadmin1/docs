@@ -1,0 +1,85 @@
+---
+title: "Guesty PMS configuration"
+description: "Read-only mirror of fees, taxes, and channel commissions configured in Guesty."
+---
+
+The **PMS Configuration** page on Guesty accounts is a read-only window into how your PMS is set up. PX uses this configuration as the source of truth for audits.
+
+To change any of the settings shown here, change them in Guesty and click **Refresh from PMS**.
+
+<Frame caption="Guesty PMS configuration">
+  ![Guesty PMS configuration](/images/screenshots/pms-config-guesty.png)
+</Frame>
+
+## Page structure
+
+Three lazy-loaded sections, each rendering its own card:
+
+1. **Account Fees**
+2. **Account Taxes**
+3. **Channel Commissions**
+
+A **Refresh from PMS** button at the top of the page re-fetches all three sections from Guesty. An info banner sits below explaining the read-only nature.
+
+## Account Fees
+
+Fees configured at the account level in Guesty - cleaning fee, pet fee, extra guest fee, and any custom fees you have added.
+
+Each fee row shows:
+
+- **Name** - the fee label.
+- **Default amount** - account-level default. Listings can override.
+- **Charge type** - `flat`, `per night`, `per guest above N`, or custom.
+- **Applies to** - which booking types or channels.
+
+This list mirrors the **Account Fees** section under your Guesty account settings. Adding or removing entries happens in Guesty.
+
+## Account Taxes
+
+Tax rules at the account level. Each row shows:
+
+- **Name** - the tax label.
+- **Percent** - the rate.
+- **Applies to** - fee categories the tax applies to (`ACCOMMODATION_FARE`, `CLEANING_FEE`, etc.).
+- **Applies to channels** - OTA channels.
+- **Is inclusive** - whether the tax is priced into accommodation or added on top.
+- **Stay-length filter** - if applicable.
+
+This is the same data shown under **Tax Configuration** -> **Account-level**. The two pages duplicate intentionally - users tend to look for taxes under Tax Configuration and fees + commissions under PMS Configuration.
+
+## Channel Commissions
+
+Per-channel commission rules from your Guesty channel configuration. Each row shows:
+
+- **Channel** - the channel name (Airbnb, Booking.com, Vrbo, etc.).
+- **Commission %** - the rate Guesty deducts.
+- **Commission basis** - what the commission is calculated on.
+- **Effective dates** - if Guesty has time-bound rates.
+
+PX uses these rates when validating commission lines on bookings during audits. If a Guesty booking on Airbnb has a 14% commission line but your channel configuration says 17%, the audit fires `COMMISSION_MISMATCH`.
+
+## Per-listing config
+
+The page above shows account-level config. Listings may have **listing-level overrides** - those are visible from the **Property detail** -> **PMS Config** tab.
+
+The per-listing view has the same three sections (Account Fees, Account Taxes, Channel Commissions) but scoped to the specific listing.
+
+## Refreshing
+
+Click **Refresh from PMS** at the top of the page to re-fetch all three sections from Guesty. PX:
+
+- Pulls fresh data via the Guesty admin API.
+- Updates its mirror in place.
+- Surfaces any errors in a banner at the top.
+
+Refreshing is safe - it does not change anything in Guesty. PX is read-only.
+
+## Errors and rate limits
+
+Guesty has API rate limits. If you refresh too frequently, you may see a 429 response. PX backs off automatically and retries; meanwhile the page shows the cached version.
+
+If a refresh fails for another reason (expired credentials, deleted listing, etc.), the section header shows a red banner with the cause. Most issues resolve by reconnecting the PMS under Settings.
+
+## Why this page exists
+
+PX shows you the same configuration Guesty has so you can answer the question "did the PMS apply this rule on this booking?" without bouncing between Guesty and PX. When an audit reports `COMMISSION_MISMATCH`, you can open this page and see whether the channel commission setting changed mid-period - a common cause.

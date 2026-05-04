@@ -1,0 +1,81 @@
+---
+title: "Channel sync overrides"
+description: "Tell PX which channels a tax syncs to so audits stop flagging false positives."
+---
+
+Channel sync overrides are PX's user-writable layer for "is this tax expected to appear on a booking from this channel?" They live on the Tax Configuration **Per-listing** tab, embedded next to each tax row.
+
+## Why they exist
+
+Some PMSes (Guesty included) do not expose the per-channel sync setting through their API. Even when the PMS does expose it (OwnerRez via inferred catalog), that information may be incomplete. So PX provides a writable layer where you state your reality:
+
+> "Lodging tax syncs to direct and Vrbo bookings, but not to Airbnb (because Airbnb collects it) and not to Booking.com (because Booking.com cannot pass through this rate)."
+
+When an audit runs against a booking, PX consults this layer to decide whether to expect the tax in the recorded charges. This is the difference between a clean audit and a wall of `MISSING_TAX` findings.
+
+## Two scopes
+
+A channel override is scoped at one of two levels:
+
+- **Account scope** - applies to every listing in your account.
+- **Listing scope** - applies to one specific listing. Overrides the account scope for that listing.
+
+If both exist for the same tax, the listing scope wins.
+
+## How to set an override
+
+1. Open **Tax Configuration**.
+2. Switch to the **Per-listing** tab.
+3. Click a listing to open its detail view.
+4. Each tax row has a strip of **channel chips** - one per channel.
+5. Click a chip to toggle whether the tax syncs to that channel.
+
+Saving is **automatic** - PX persists the change as soon as you click. There is no Save button to forget.
+
+To set an account-scope override (apply to every listing), use the same toggles on a representative listing, but choose the "Apply to account" option in the dialog when prompted. PX records the change at account scope.
+
+## Common channel slugs
+
+| Slug | Channel |
+|---|---|
+| `airbnb2` | Airbnb |
+| `bookingCom` | Booking.com |
+| `vrbo` | Vrbo |
+| `expedia` | Expedia |
+| `direct` | Direct booking |
+| `homeAway` | HomeAway (legacy) |
+
+If your PMS uses a slug PX does not recognize, the chip still appears with the raw slug name. Toggling it works the same way.
+
+## How an audit consults overrides
+
+For each tax on each booking, the audit decision tree is:
+
+1. Is there a **listing-scope** override for this tax?
+   - If yes, use it. The listed channels are expected; others are not.
+2. Otherwise, is there an **account-scope** override?
+   - If yes, use it.
+3. Otherwise, fall back to the PMS's `applies_to_channels` field.
+4. If still ambiguous, default to "applies to all channels" and report differences as findings.
+
+## When NOT to use channel overrides
+
+Channel overrides are about **expected sync**, not about marketplace remittance. If Airbnb collects and remits a tax on your behalf, that is a separate setting:
+
+- Use [Airbnb tax remittance](/tax-configuration/airbnb-remittance) for marketplace-collected taxes. PX excludes them from findings on Airbnb bookings.
+- Use channel overrides for "this channel does not have this tax in its system at all."
+
+Both can apply to the same tax. For a state lodging tax that Airbnb remits in some states and not others, you might use Airbnb remittance to exclude the tax on properties in remitted states, and a channel override to exclude it on listings sold via a channel that does not pass it through.
+
+## Resetting
+
+To remove an override:
+
+1. Toggle the chips back to their default state.
+2. PX deletes the override row when no chips remain modified.
+
+You can also delete an override programmatically, but the UI toggle is the supported path.
+
+## Deprecated: airbnb_break_out_from_fare
+
+Earlier versions of PX surfaced a per-tax flag called `airbnb_break_out_from_fare`. The current UI no longer exposes it - audits ignore the flag. If you used to set it, the value remains stored but does not affect audit logic.

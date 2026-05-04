@@ -1,0 +1,116 @@
+---
+title: "OwnerRez Catalog"
+description: "Build and confirm the audit baseline for OwnerRez accounts."
+---
+
+OwnerRez does not expose a configuration API for taxes, surcharges, or commission rates. PX works around this with the **OwnerRez Catalog** - a user-maintained list of tax, fee, and commission rules that audits use as the baseline.
+
+You configure the actual rates **in OwnerRez itself** (Settings -> Taxes, Settings -> Surcharges, Property Management -> Setup & Configuration). The catalog in PX is the audit's source of truth.
+
+<Frame caption="OwnerRez Catalog">
+  ![OwnerRez Catalog](/images/screenshots/ownerrez-catalog.png)
+</Frame>
+
+## How catalog entries are created
+
+Three ways:
+
+1. **Inferred from booking history.** Click **Detect from bookings** and PX scans your last 18 months of bookings, looking for patterns in line items. Any rule that recurs is added as `inferred`.
+2. **Manually added.** Click **Add row** to enter a tax, surcharge, or commission you know exists but PX did not pick up.
+3. **Imported from OwnerRez** during the initial sync if catalog data is found in any payload PX can read.
+
+After detection, every row sits in `inferred` status until you review it.
+
+## Statuses
+
+Each catalog row has a status:
+
+| Status | Used by audits? | Meaning |
+|---|---|---|
+| `inferred` | No | Auto-derived. Awaiting review. |
+| `user-added` | Yes | You created the row manually. |
+| `confirmed` | Yes | You reviewed and approved an inferred row. |
+| `archived` | No | Hidden from audits but kept for history. |
+
+To use a row in audits, it needs to be `user-added` or `confirmed`. Until you confirm at least one tax row, audits short-circuit with a `CATALOG_EMPTY` finding instead of running per-reservation checks.
+
+## Detection options
+
+Click **Detect from bookings** to open the detection dialog:
+
+- **Lookback days** - how far back to scan. Default 60.
+- **Rebuild** - if checked, PX wipes existing inferred rules before re-deriving. Use this when your catalog has gone stale.
+
+For accounts with many listings (200+), detection runs as a background job. You will see a progress card on the **Home** page under **Accounting Diagnostic Job Runs**. For smaller accounts, detection runs inline and returns immediately.
+
+## Row anatomy
+
+| Field | Meaning |
+|---|---|
+| **Kind** | `tax`, `fee`, or `commission`. |
+| **Name** | Display label. |
+| **Rate** | The numeric value. |
+| **Unit** | `percent` or `fixed`. |
+| **Applies to** | Categories the rule applies to (accommodation, cleaning, total, etc.). |
+| **Scope** | Account-wide or specific listings. |
+| **Status** | One of the four above. |
+| **Notes** | Free-text. Useful for jurisdiction notes. |
+
+You can edit any field on a `user-added` row. On `inferred` rows, editing a field auto-confirms the row.
+
+## Scoping to listings
+
+A catalog row can be:
+
+- **Account-wide** - applies to every listing.
+- **Listing-scoped** - applies only to a specific subset.
+
+Use listing scope when a tax or fee is specific to a property (a city tax that only applies to a city-located listing, for example). The picker on the row lets you select multiple listings.
+
+If a row is account-wide, every listing-scoped row that overlaps with it takes precedence on its listings.
+
+## Workflows
+
+### After connecting OwnerRez for the first time
+
+1. Open **PMS Configuration**.
+2. Click **Detect from bookings** with default settings.
+3. Review the resulting list.
+4. **Confirm** rows that match your reality.
+5. **Edit** rows where the inferred rate is close but not exact.
+6. **Add** any tax or fee PX missed.
+7. **Archive** rows that are no longer used.
+
+This usually takes 10-30 minutes for a typical PMC.
+
+### After a tax rate change
+
+1. Update the tax in OwnerRez.
+2. Open the catalog in PX.
+3. Edit the affected row, update the rate, and Save.
+4. The audit's `config_source` for findings on bookings after the change will report the new rate.
+
+### When PX detects a new pattern
+
+PX may surface new `inferred` rows after future runs of **Detect from bookings**. Review them and confirm or archive as appropriate. Confirmed rows stay confirmed; inferred rows are recreated each time you re-detect.
+
+## Audit interaction
+
+The audit consults the catalog as its baseline:
+
+- **Tax findings** look up `kind = tax` rows scoped to the booking's listing.
+- **Fee findings** look up `kind = fee`.
+- **Commission findings** look up `kind = commission`.
+- **CATALOG_EMPTY** is emitted if the catalog has zero confirmed/user-added rows for the relevant kind.
+
+Each finding includes a `config_source` that points back to the specific catalog row driving the expectation, so you can edit the catalog row and re-run the audit to see if the finding clears.
+
+## Where on this page does each item live in OwnerRez?
+
+| In PX | In OwnerRez |
+|---|---|
+| Tax rows | Settings -> Taxes |
+| Fee rows (cleaning, pet, etc.) | Settings -> Surcharges |
+| Commission rows | Property Management -> Setup & Configuration |
+
+PX is opinionated about catalog structure to keep audits sane. If your OwnerRez setup uses unusual constructs (custom calculated fees, conditional surcharges), enter them as best you can and use the **Notes** field to document edge cases.

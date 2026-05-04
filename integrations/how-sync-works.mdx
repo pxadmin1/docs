@@ -1,0 +1,76 @@
+---
+title: "How sync works"
+description: "When PX pulls data from your PMS, what gets cached, and how to refresh."
+---
+
+PX syncs in three modes: **on connect**, **on demand**, and **via webhooks**.
+
+## On connect
+
+When you first connect a PMS, PX fetches:
+
+- Account metadata (the OAuth account ID, admin user).
+- A starter catalog (Guesty: live config; OwnerRez: nothing yet - inferred later).
+
+No reservations, no bookings, no journal entries. Properties also do not auto-sync - you trigger that explicitly the first time.
+
+## On user action
+
+These actions hit your PMS in real time:
+
+| User action | What gets fetched |
+|---|---|
+| Properties -> **Sync from \[PMS]** | Full listing catalog. Idempotent upsert by PMS ID. |
+| Properties -> **Sync owners** (when present) | Owner records, mapped to properties. |
+| Property detail -> **Reservations** tab | Reservations within the selected date filters. |
+| Property detail -> open a reservation folio | Per-reservation charges, payments, journal entries (Guesty only). |
+| Tax Configuration -> **Refresh from PMS** | Account-level and per-listing taxes (Guesty). |
+| PMS Configuration -> **Refresh from PMS** | Fees, taxes, commissions catalog (Guesty). |
+| PMS Configuration -> **Detect from bookings** | Catalog inference from history (OwnerRez). |
+| Reports -> **Generate Report** | Reservations in the requested check-in range, with full financial breakdown. |
+| Audits -> **Generate Audit** | Reservations in the audit range plus their dependencies. |
+
+Each "on demand" call is rate-limit aware. If your PMS rejects with a 429, PX surfaces a banner with a countdown and the action's button stays disabled until the cooldown ends.
+
+## Via webhooks
+
+PX subscribes to PMS webhooks so changes propagate without you clicking sync:
+
+- **Guesty** - reservation created, reservation changed, listing changed.
+- **OwnerRez** - booking created, booking changed, payment received, refund issued.
+
+Webhook health is shown on the **Integration Status** panel under **Settings**. A red light means PX did not register or failed verification - click **Refresh** there to retry.
+
+## What gets cached
+
+PX caches selectively to keep audits fast and to stay under PMS rate limits:
+
+| Data | Cache behavior |
+|---|---|
+| Properties | Cached. Refreshed on each Properties sync. |
+| Reservations | Not cached. Re-fetched on demand. |
+| Guesty journal entries | Cached for **30 days**, then auto-purged. |
+| OwnerRez payments | Cached permanently (updated by webhook). |
+| OwnerRez refunds | Cached permanently (updated by webhook). |
+| OwnerRez deposits | Cached permanently (updated by webhook). |
+| OwnerRez catalog (your audit baseline) | Cached permanently, status-tracked. |
+
+If you ever suspect cached data is stale, click **Refresh** on the relevant page. Most pages have a refresh button at the top.
+
+## Manual properties
+
+You can also create properties manually from the Properties page (**Add Manually**). Manual properties have no PMS ID, so:
+
+- They are never overwritten by a sync.
+- They do not appear in audits - audits read from PMS reservations only.
+- They are useful for tracking off-platform inventory in PX without distorting your PMS data.
+
+## Switching PMSes
+
+PX supports one active PMS per account. Switching requires:
+
+1. **Settings** -> **PMS Connection** -> **Delete** the existing credentials.
+2. Connect the new provider.
+3. **Properties** -> **Sync from \[new PMS]**.
+
+Historical data tied to the old PMS stays in place. You may see properties from both providers in your list until you remove the old ones manually.

@@ -1,0 +1,99 @@
+---
+title: "Connect Guesty"
+description: "Generate Guesty API credentials and connect them to PX Accounting."
+---
+
+PX Accounting connects to Guesty using the **Open API** OAuth flow. You will paste a Client ID and Client Secret into PX, and PX exchanges them for an access token that it stores encrypted.
+
+## Before you start
+
+You will need:
+
+- An admin user on your Guesty account.
+- Permission to create OAuth applications under **Integrations** -> **API**.
+
+## Step 1 - generate Guesty API credentials
+
+1. Sign in to Guesty.
+2. Go to **Integrations** -> **API** (or **Settings** -> **Integrations** depending on your Guesty plan).
+3. Create a new application named something like `PX Accounting`.
+4. Copy the generated **Client ID** and **Client Secret**. You will paste them into PX next.
+
+The credentials should grant read access to listings, reservations, and accounting data. PX never writes back to Guesty.
+
+<Warning>
+  Save the Client Secret somewhere safe before you leave the Guesty page - Guesty does not show it again.
+</Warning>
+
+## Step 2 - paste credentials into PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **Guesty**.
+3. Paste the **Client ID** and **Client Secret**.
+4. Click **Save credentials**.
+
+PX validates the credentials immediately. On success the **Integration Status** panel below the card shows three lights:
+
+- **Admin** - PX can authenticate against the Guesty admin API.
+- **OAuth** - the access token was issued and stored encrypted.
+- **Webhook** - PX registered its webhook endpoint with your account.
+
+If any light is red, click **Refresh** to retry. The error message under each light tells you what failed (most commonly: wrong Client ID, expired Client Secret, or insufficient scopes).
+
+<Frame caption="Settings page with PMS Connection and Integration Status">
+  ![Guesty connected](/images/screenshots/settings-guesty-connected.png)
+</Frame>
+
+## Step 3 - sync properties
+
+1. Open **Properties** in the sidebar.
+2. Click **Sync from Guesty**.
+
+PX fetches your full listing catalog and creates a row per listing. New properties get optimization tracking; existing properties update in place. Re-syncing later is safe - PX matches on Guesty's listing ID.
+
+## What PX reads from Guesty
+
+| Data | When fetched |
+|---|---|
+| Listings | On sync (Properties page) |
+| Listing config: fees, taxes, channel commissions | On demand (PMS Configuration page) |
+| Reservations | On demand (property detail Reservations tab, Reports, Audits) |
+| Journal entries (per reservation) | On demand (folio modal, Audits) |
+| Owners | On owner sync |
+
+PX caches Guesty journal entries for 30 days. They auto-purge after that to keep your data fresh.
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. This:
+
+- Removes the encrypted credentials.
+- Unregisters the webhook.
+- Leaves your existing PX data (properties, business models, audit history) in place.
+
+You can reconnect anytime by repeating the steps above.
+
+## Troubleshooting
+
+**Admin status is red after saving credentials.**
+The Client ID is wrong or the application was deleted in Guesty. Re-create it and paste fresh credentials.
+
+**OAuth status is red.**
+The Client Secret is wrong or expired. Generate a new secret in Guesty and update PX.
+
+**Webhook status is red.**
+PX could not register its webhook. Most often this is a Guesty plan limitation - some plans cap the number of webhooks. Remove an unused webhook in Guesty and click **Refresh** in PX.
+
+**Sync runs but no properties appear.**
+Check that the listings are marked active in Guesty. Also confirm the Guesty user that authorized the app has visibility into the listings (sub-accounts may be restricted).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="How sync works" icon="refresh-cw" href="/integrations/how-sync-works">
+    What gets synced when - and what stays cached.
+  </Card>
+  <Card title="Manage properties" icon="building-2" href="/properties/manage">
+    Browse your synced portfolio and toggle auto-fix.
+  </Card>
+</CardGroup>

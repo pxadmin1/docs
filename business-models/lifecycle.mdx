@@ -18,10 +18,10 @@ Four statuses, with clear semantics:
 
 ### Transitions
 
-- **Draft -> Active** - happens when you click **Activate** in the wizard or on the edit screen. Triggers a diagnostics batch run for every assigned property.
-- **Active -> Inactive** - **Deactivate** unassigns every property and flips status. Useful when you are mid-transition between models.
-- **Active -> Archived** or **Inactive -> Archived** - **Archive** hides the model from the default list. The model is still readable for history and audit log integrity.
-- **Inactive -> Active** - re-activate by editing and saving with status `active`.
+- **Draft to Active** - happens when you click **Activate** in the wizard or on the edit screen. Triggers a diagnostics batch run for every assigned property.
+- **Active to Inactive** - **Deactivate** unassigns every property and flips status. Useful when you are mid-transition between models.
+- **Active to Archived** or **Inactive to Archived** - **Archive** hides the model from the default list. The model is still readable for history and audit log integrity.
+- **Inactive to Active** - re-activate by editing and saving with status `active`.
 
 You cannot delete a model. Archive is the closest equivalent.
 
@@ -37,7 +37,7 @@ Edits that do **not** trigger a new version:
 
 - Changing the **name** or **description**.
 - Changing the **activation date** (which only affects which version applies going forward).
-- Changing the **status** (active <-> inactive).
+- Changing the **status** (active or inactive).
 
 Edits that **do** trigger a new version:
 

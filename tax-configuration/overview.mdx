@@ -12,12 +12,16 @@ Tax configuration in PX has three independent layers. Knowing which layer to tou
     Read-only view of taxes from your PMS. Change them in your PMS, not in PX.
   </Card>
   <Card title="Channel sync overrides" icon="filter" href="/tax-configuration/channel-overrides">
-    Per-tax, per-channel toggles for which channels a tax syncs to.
+    PX-only. Per-tax, per-channel toggles for which channels a tax syncs to. Stored in PX, not pushed to your PMS.
   </Card>
   <Card title="Airbnb tax remittance" icon="house" href="/tax-configuration/airbnb-remittance">
-    Tells PX which taxes Airbnb collects and remits, so audits exclude them.
+    PX-only. Tells PX which taxes Airbnb collects and remits, so audits exclude them. Stored in PX, not pushed to your PMS.
   </Card>
 </CardGroup>
+
+<Note>
+  The two writable layers (channel sync overrides and Airbnb tax remittance) are stored **inside PX only**. PX never writes back to your PMS. If you need to change a rate or applicability rule, change it in your PMS.
+</Note>
 
 ## Why three layers?
 

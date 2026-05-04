@@ -1,0 +1,64 @@
+---
+title: "Connect Hostaway"
+description: "Generate a Hostaway API key and connect it to PX Accounting."
+---
+
+PX Accounting connects to Hostaway with an Account ID and a Secret Key generated inside Hostaway.
+
+## Before you start
+
+You will need:
+
+- An admin user on your Hostaway account with permission to manage the Public API.
+- The ability to copy the Secret Key once it is shown - Hostaway only displays it in the modal at creation time.
+
+## Step 1 - generate Hostaway credentials
+
+1. Sign in to Hostaway.
+2. Go to **Settings** -> **Hostaway API**.
+   - Direct link: [dashboard.hostaway.com/settings/hostaway-api](https://dashboard.hostaway.com/settings/hostaway-api)
+3. Click **Create**.
+4. Pick **Hostaway Public API** as the partner (this is what PX uses).
+5. Hostaway shows your **Account ID** and a **Secret Key** in a modal.
+
+<Warning>
+  The Secret Key is shown **only once**. Copy it before closing the modal. If you lose it, generate a new one.
+</Warning>
+
+For background, see Hostaway's article: [Public API account and secret key](https://support.hostaway.com/hc/en-us/articles/360002576293).
+
+## Step 2 - paste credentials into PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **Hostaway**.
+3. Paste your **Account ID** and **Secret Key**.
+4. Click **Save credentials**.
+
+PX validates the credentials and the **Integration Status** panel shows three lights: **Admin**, **OAuth**, and **Webhook**.
+
+## What PX reads from Hostaway
+
+| Data | When fetched |
+|---|---|
+| Listings | On connect and on demand |
+| Reservations | On demand |
+| Per-charge financial fields | On demand |
+| Tax setup | Read directly from Hostaway |
+| Owner records | When present |
+
+Hostaway exposes 60+ granular finance fields per reservation, so audits cover taxes, fees, and commissions in detail without inference.
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. This removes the credentials from PX and unregisters webhooks.
+
+## Troubleshooting
+
+**Admin status is red after saving credentials.**
+The Account ID is wrong or the API token has been revoked. Generate a new one.
+
+**Webhook status is red.**
+Hostaway plan limits or webhook endpoint conflicts can cause this. Confirm your plan includes webhooks and click **Refresh**.
+
+**Access tokens stop working after a long time.**
+Hostaway access tokens (derived from key + secret) expire after 24 months. Re-issue the key in Hostaway and update PX.

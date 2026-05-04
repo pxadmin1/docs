@@ -1,0 +1,65 @@
+---
+title: "Connect Hospitable"
+description: "Generate a Hospitable Personal Access Token and connect it to PX Accounting."
+---
+
+PX Accounting connects to Hospitable (formerly Smartbnb) with a Personal Access Token (PAT) you generate inside Hospitable.
+
+## Before you start
+
+You will need:
+
+- A paid Hospitable plan. The Essentials plan does not include public API access; if you are on Essentials, upgrade first.
+- An owner-level login.
+
+## Step 1 - generate a Personal Access Token
+
+1. Sign in to Hospitable: [my.hospitable.com](https://my.hospitable.com).
+2. In the sidebar, open **Apps** (or **Settings** -> **Integrations**).
+3. Click **API access**.
+4. Switch to the **Access tokens** tab.
+5. Click **+ Add new**.
+6. Give the token a name like `PX Accounting` and create it.
+7. Copy the token.
+
+For details, see Hospitable's article: [Accessing the Public API with a Personal Access Token](https://help.hospitable.com/en/articles/8609392-accessing-the-public-api-with-a-personal-access-token-pat).
+
+<Warning>
+  Personal Access Tokens expire after **1 year**. Set a reminder to re-issue and update PX before the expiry, or audits will start failing.
+</Warning>
+
+## Step 2 - paste the token into PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **Hospitable**.
+3. Paste the **Personal Access Token**.
+4. Click **Save credentials**.
+
+PX validates the token and the **Integration Status** panel shows three lights: **Admin**, **OAuth**, and **Webhook**.
+
+## What PX reads from Hospitable
+
+| Data | When fetched |
+|---|---|
+| Listings | On connect and on demand |
+| Reservations | On demand |
+| Per-night pricing breakdown | On demand |
+| Guest / host financial split | On demand |
+| Tax setup | Read directly from Hospitable |
+
+Hospitable exposes per-night pricing (not just the stay average) and labeled line items, so audits can verify accommodation amounts to the day.
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. This removes the token from PX and unregisters webhooks.
+
+## Troubleshooting
+
+**Admin status is red.**
+The token is wrong or has been revoked in Hospitable. Generate a new PAT and update PX.
+
+**Token expired.**
+Hospitable PATs expire after 1 year. Re-issue and update PX.
+
+**API access is disabled.**
+Hospitable's Essentials plan does not include public API. Upgrade to a paid tier and try again.

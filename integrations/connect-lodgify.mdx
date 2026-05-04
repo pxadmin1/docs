@@ -1,0 +1,65 @@
+---
+title: "Connect Lodgify"
+description: "Get your Lodgify API key and connect it to PX Accounting."
+---
+
+PX Accounting connects to Lodgify with an API key from your Lodgify account settings.
+
+## Before you start
+
+You will need:
+
+- A Lodgify plan that includes public API access. Some plans do not - if the API key field is empty, you will need to contact Lodgify support to have one provisioned.
+- Owner or admin login.
+
+## Step 1 - locate your API key
+
+1. Sign in to Lodgify.
+2. Open **Settings** -> **Public API**.
+3. Copy the **API key** shown on the page.
+
+For background, see Lodgify's docs: [Authorization](https://docs.lodgify.com/docs/authorization).
+
+If the API key field is empty:
+
+- Contact Lodgify support and ask them to provision an API key for your account. Self-serve issuance is not always available.
+- Confirm your plan includes API access.
+
+<Warning>
+  The Lodgify API key carries full read and write scope. Treat it as a production credential.
+</Warning>
+
+## Step 2 - paste the key into PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **Lodgify**.
+3. Paste the **API key**.
+4. Click **Save credentials**.
+
+PX validates the key and the **Integration Status** panel shows three lights: **Admin**, **OAuth**, and **Webhook**.
+
+## What PX reads from Lodgify
+
+| Data | When fetched |
+|---|---|
+| Listings | On connect and on demand |
+| Reservations | On demand |
+| Charges, payments | On demand |
+| Tax setup | Read directly from Lodgify |
+
+PX is read-only against Lodgify even though the API key technically carries write scope.
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. The key is wiped from PX and webhooks are unregistered.
+
+## Troubleshooting
+
+**Admin status is red.**
+The API key is wrong or has been rotated. Pull the latest value from Lodgify and update PX.
+
+**API key field is empty in Lodgify.**
+Contact Lodgify support to have one provisioned.
+
+**Webhook status is red.**
+Verify your Lodgify plan includes webhook delivery. Click **Refresh** in PX after confirming.

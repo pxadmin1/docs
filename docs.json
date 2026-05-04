@@ -29,7 +29,7 @@
         {
           "anchor": "Dashboard",
           "icon": "layout-dashboard",
-          "href": "https://app.pxaccounting.com"
+          "href": "https://pxapp.net"
         },
         {
           "anchor": "Support",
@@ -55,6 +55,11 @@
           "integrations/overview",
           "integrations/connect-guesty",
           "integrations/connect-ownerrez",
+          "integrations/connect-hostaway",
+          "integrations/connect-hospitable",
+          "integrations/connect-hostfully",
+          "integrations/connect-lodgify",
+          "integrations/connect-uplisting",
           "integrations/how-sync-works"
         ]
       },
@@ -140,7 +145,7 @@
     "primary": {
       "type": "button",
       "label": "Open dashboard",
-      "href": "https://app.pxaccounting.com"
+      "href": "https://pxapp.net"
     }
   },
   "footer": {

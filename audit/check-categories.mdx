@@ -42,7 +42,7 @@ Guesty has a built-in accounting engine, so PX runs all three classes.
 
 Only runs when the property has an assigned active business model.
 
-- **Generated ledger balance** - the PX-generated ledger from your business model balances.
+- **Modeled ledger balance** - the postings PX models from your business model balance internally for audit purposes.
 - **Owner statement reconciliation** - calculated owner payout matches recorded payout.
 - **Recognition date validation** - charges land on the dates your business model specifies.
 - **Commission rate vs config** - commission rate matches the business model's commission_setup.
@@ -73,9 +73,9 @@ All Tier 0/1/2 checks from Guesty plus:
 
 ### Class 3 - business model validation
 
-Same set as Guesty, but built from per-charge data instead of journal entries:
+Same set as Guesty, but the audit works from per-charge data instead of journal entries:
 
-- Generated ledger balance.
+- Modeled ledger balance (audit-internal, not a published ledger).
 - Owner payout reconciliation.
 - Recognition date validation.
 - Commission rate vs business model.

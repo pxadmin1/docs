@@ -38,10 +38,10 @@ Business models are **versioned**. Editing an active model creates a new version
 Tax configuration in PX has three independent layers:
 
 1. **PMS mirror (read-only).** PX shows the taxes configured on your PMS account and per listing. You change these in your PMS, not in PX.
-2. **Channel sync overrides (user-writable).** Per-tax, per-channel toggles to tell PX which channels a tax actually syncs to. Used during audits to decide whether to expect a tax on a given booking.
-3. **Airbnb tax remittance (user-writable).** A four-step wizard that records which taxes Airbnb collects and remits on your behalf. Findings for those taxes are suppressed on Airbnb bookings.
+2. **Channel sync overrides (PX-only, user-writable).** Per-tax, per-channel toggles you set inside PX. They are used during audits to decide whether to expect a tax on a given booking. PX does **not** push these back to your PMS.
+3. **Airbnb tax remittance (PX-only, user-writable).** A four-step wizard you complete inside PX that records which taxes Airbnb collects and remits on your behalf. Findings for those taxes are suppressed on Airbnb bookings. Again, this is stored in PX only and is not pushed to your PMS.
 
-OwnerRez has no tax read API, so the OwnerRez catalog (under PMS Configuration) is the source of truth instead - taxes are inferred from your booking history and you confirm or edit them.
+Some PMSes do not expose a tax read API. In those cases, the PMS catalog (under PMS Configuration) is the source of truth - taxes are inferred from your booking history and you confirm or edit them inside PX.
 
 ## Audit
 
@@ -73,7 +73,7 @@ When auto-fix is on for a property, unresolved issues show **Fix in Progress** i
 ## How PMS data flows in
 
 ```
-PMS (Guesty / OwnerRez)
+Your PMS
     |
     | OAuth or API key
     v
@@ -90,7 +90,7 @@ Audit (against business model + tax config + PMS catalog)
 Findings -> Property detail / Audit page / Reports
 ```
 
-For Guesty, the accounting engine runs inside Guesty - PX reads journal entries from there. For OwnerRez, PX builds the ledger from charges, payments, refunds, and deposits because OwnerRez has no built-in accounting. Audit logic is the same either way; only the data source differs.
+PX is **not a ledger or bookkeeping engine**. It does not maintain accounts, post journal entries, or replace your accounting system. PX *reads* your PMS data and *audits* it against your business model and tax configuration. Where your PMS exposes journal entries, PX uses them directly. Where it does not, PX works from per-charge data (charges, payments, refunds, deposits) to compute what the postings should look like for audit purposes only. The audit logic is the same either way; only the data source differs.
 
 ## Where each concept lives in the UI
 

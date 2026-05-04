@@ -15,11 +15,14 @@ You will need:
 ## Step 1 - generate Guesty API credentials
 
 1. Sign in to Guesty.
-2. Go to **Integrations** -> **API** (or **Settings** -> **Integrations** depending on your Guesty plan).
-3. Create a new application named something like `PX Accounting`.
-4. Copy the generated **Client ID** and **Client Secret**. You will paste them into PX next.
+2. In the side nav, open **Integrations** -> **OAuth applications**.
+3. Click **New application** at the top right.
+4. Enter a name (`PX Accounting`) and an optional description, then create it.
+5. Copy the generated **Client ID** and **Client Secret** before closing the page.
 
-The credentials should grant read access to listings, reservations, and accounting data. PX never writes back to Guesty.
+For background, see Guesty's [Open API quick-start guide](https://open-api-docs.guesty.com/docs/quick-start-guide). The Open API is for direct PMS customers; Marketplace and Channel partners use Guesty's partner program instead.
+
+The credentials grant read access to listings, reservations, and accounting data. PX never writes back to Guesty.
 
 <Warning>
   Save the Client Secret somewhere safe before you leave the Guesty page - Guesty does not show it again.
@@ -43,13 +46,6 @@ If any light is red, click **Refresh** to retry. The error message under each li
 <Frame caption="Settings page with PMS Connection and Integration Status">
   ![Guesty connected](/images/screenshots/settings-guesty-connected.png)
 </Frame>
-
-## Step 3 - sync properties
-
-1. Open **Properties** in the sidebar.
-2. Click **Sync from Guesty**.
-
-PX fetches your full listing catalog and creates a row per listing. New properties get optimization tracking; existing properties update in place. Re-syncing later is safe - PX matches on Guesty's listing ID.
 
 ## What PX reads from Guesty
 

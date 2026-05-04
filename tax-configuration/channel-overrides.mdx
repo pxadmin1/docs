@@ -5,6 +5,10 @@ description: "Tell PX which channels a tax syncs to so audits stop flagging fals
 
 Channel sync overrides are PX's user-writable layer for "is this tax expected to appear on a booking from this channel?" They live on the Tax Configuration **Per-listing** tab, embedded next to each tax row.
 
+<Note>
+  Channel sync overrides are stored **inside PX only**. They tell PX what to expect during audits. PX does not push them back to your PMS.
+</Note>
+
 ## Why they exist
 
 Some PMSes (Guesty included) do not expose the per-channel sync setting through their API. Even when the PMS does expose it (OwnerRez via inferred catalog), that information may be incomplete. So PX provides a writable layer where you state your reality:

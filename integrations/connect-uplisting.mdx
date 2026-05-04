@@ -1,0 +1,56 @@
+---
+title: "Connect Uplisting"
+description: "Get your Uplisting API key and connect it to PX Accounting."
+---
+
+PX Accounting connects to Uplisting with an API key from your Uplisting account.
+
+## Before you start
+
+You will need:
+
+- An Uplisting account.
+- Owner-level login.
+
+## Step 1 - generate or copy your API key
+
+1. Sign in to Uplisting.
+2. Go to [app.uplisting.io/connect/api](https://app.uplisting.io/connect/api).
+   - First-time visitors: click to generate a key.
+   - Returning visitors: copy the existing key.
+
+For background, see Uplisting's docs: [API & Webhooks](https://support.uplisting.io/docs/api).
+
+<Warning>
+  Uplisting issues a single API key per account, with full scope. **Rotating it breaks every existing integration simultaneously**, including any other tools you have connected. Coordinate before rotating.
+</Warning>
+
+## Step 2 - paste the key into PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **Uplisting**.
+3. Paste the **API key**.
+4. Click **Save credentials**.
+
+PX validates the key and the **Integration Status** panel shows three lights: **Admin**, **OAuth**, and **Webhook**.
+
+## What PX reads from Uplisting
+
+| Data | When fetched |
+|---|---|
+| Listings | On connect and on demand |
+| Reservations | On demand |
+| Charges, payments | On demand |
+| Tax setup | Read directly from Uplisting |
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. The key is wiped from PX and webhooks are unregistered.
+
+## Troubleshooting
+
+**Admin status is red.**
+The API key is wrong or was rotated in Uplisting. Get the latest value and update PX.
+
+**Other integrations broke after rotating the key.**
+Expected. Uplisting uses a single shared key. Update every integration that uses it, including PX.

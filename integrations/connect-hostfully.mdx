@@ -1,0 +1,60 @@
+---
+title: "Connect Hostfully"
+description: "Get your Hostfully API key and connect it to PX Accounting."
+---
+
+PX Accounting connects to Hostfully with an agency-level API key. The key sends as the `X-HOSTFULLY-APIKEY` HTTP header.
+
+## Before you start
+
+You will need:
+
+- A Hostfully plan that includes public API access. Not all plans do - if your agency settings have no API key field, contact api@hostfully.com to request access.
+- Agency-admin permissions in Hostfully.
+
+## Step 1 - locate your API key
+
+1. Sign in to Hostfully: [platform.hostfully.com/agency.jsp](https://platform.hostfully.com/agency.jsp).
+2. Open the **Agency Settings** page.
+3. Scroll to the **API Key** field and copy the value.
+
+If the field is empty or missing:
+
+- Confirm your Hostfully plan includes API access.
+- Email api@hostfully.com to request the key.
+
+For background, see Hostfully's articles: [Exporting data through the API](https://help.hostfully.com/en/articles/3453789-exporting-data-through-the-hostfully-api) and the developer reference at [dev.hostfully.com](https://dev.hostfully.com/reference/getting-started).
+
+## Step 2 - paste the key into PX
+
+1. In PX, open **Settings**.
+2. In the **PMS Connection** card, pick **Hostfully**.
+3. Paste the **API Key**.
+4. Click **Save credentials**.
+
+PX validates the key and the **Integration Status** panel shows three lights: **Admin**, **OAuth**, and **Webhook**.
+
+## What PX reads from Hostfully
+
+| Data | When fetched |
+|---|---|
+| Listings | On connect and on demand |
+| Reservations | On demand |
+| Charges, payments | On demand |
+| Tax setup | Read directly from Hostfully |
+| Owner records | When present |
+
+## Removing the connection
+
+Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. The key is wiped from PX and webhooks are unregistered.
+
+## Troubleshooting
+
+**Admin status is red.**
+The API key is wrong or has been rotated in Hostfully. Get the latest value from agency settings and update PX.
+
+**API key field is missing in Hostfully.**
+Plan limitation. Contact api@hostfully.com to enable API access on your account.
+
+**Sandbox vs production confusion.**
+Hostfully requires development to start in sandbox; production keys are issued separately. Make sure you are using the production key, not a sandbox one.

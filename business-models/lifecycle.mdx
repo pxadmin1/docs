@@ -3,84 +3,50 @@ title: "Lifecycle and versioning"
 description: "How status transitions and versions work, and how to manage a model over time."
 ---
 
-A business model in PX is a long-lived object. It moves through statuses, accrues versions, and survives across countless audits. Knowing how the lifecycle works makes day-to-day management predictable.
+A business model in PX is a long-lived object. It moves through statuses, accrues versions, and survives across countless audits.
 
 ## Status
 
-Four statuses, with clear semantics:
+Four statuses with clear semantics:
 
-| Status | Meaning | Audits run? | Editable? | Visible by default? |
-|---|---|---|---|---|
-| **Draft** | Work in progress. | No | Yes | Yes |
-| **Active** | In use. Audits use this model for assigned properties. | Yes | Yes (creates new version) | Yes |
-| **Inactive** | Disabled, no assignments. Preserved for history. | No (no assignments) | Yes (re-activates) | Yes |
-| **Archived** | Hidden from default list. Audit history still references it. | No | No | Hidden by default; visible when filter is set to Archived |
+| Status | Meaning |
+|---|---|
+| **Draft** | Work in progress. Not used by audits. |
+| **Active** | In use. Audits use this model for assigned properties. |
+| **Inactive** | Disabled, no assignments. Preserved for history. |
+| **Archived** | Hidden from the default list. Audit history still references it. |
 
-### Transitions
-
-- **Draft to Active** - happens when you click **Activate** in the wizard or on the edit screen. Triggers a diagnostics batch run for every assigned property.
-- **Active to Inactive** - **Deactivate** unassigns every property and flips status. Useful when you are mid-transition between models.
-- **Active to Archived** or **Inactive to Archived** - **Archive** hides the model from the default list. The model is still readable for history and audit log integrity.
-- **Inactive to Active** - re-activate by editing and saving with status `active`.
-
-You cannot delete a model. Archive is the closest equivalent.
+You move between these from the model edit screen. **Activate** flips Draft to Active and triggers a diagnostics run for assigned properties. **Deactivate** unassigns every property and flips status. **Archive** hides the model from the default list while keeping it readable for history. You cannot delete a model.
 
 ## Versioning
 
-Editing the `pmc_config` of an **active** model creates a new version automatically.
+Editing the configuration of an active model creates a new version automatically.
 
 - The previous version becomes immutable.
-- The new version gets a higher version number and a `parent_id` pointing to the previous version.
-- Past audits remain consistent because they reference the version that was active on the reservation's check-in date.
+- Past audits stay consistent because they reference the version that was active on the reservation's check-in date.
 
-Edits that do **not** trigger a new version:
-
-- Changing the **name** or **description**.
-- Changing the **activation date** (which only affects which version applies going forward).
-- Changing the **status** (active or inactive).
-
-Edits that **do** trigger a new version:
-
-- Any change inside `pmc_config`: net rental income items, commission rates, recognition, channel conditions, recurring charges, allocations, owner taxes.
+Edits to the **name**, **description**, **activation date**, or **status** do not create a new version. Edits to the configuration (commission, trust account charges, net rental income, owner taxes) do.
 
 ## Version history
 
-Open a model and look for the **Version history** section. PX shows:
-
-- A list of versions with timestamps and the person who edited them.
-- A side-by-side diff of changes between versions, where applicable.
-
-Version history is read-only - you cannot edit a past version. To "revert" you can edit the current version to match a prior one, which simply creates a new version with those values.
+Open a model and look for the **Version history** section. PX shows a list of versions with timestamps and a diff between adjacent versions. To "revert", edit the current version to match a prior one - PX records that as a new version with those values.
 
 ## Duplicate
 
-The **Duplicate** action creates a sibling model with `Copy` appended to the name. The duplicate:
-
-- Starts in **Draft** status.
-- Has no property assignments.
-- Has no version history of its own (version 1).
+The **Duplicate** action creates a sibling model with `Copy` appended to the name. The duplicate starts in Draft, has no property assignments, and has its own version history starting from version 1.
 
 Use duplicate for what-if scenarios: "What if commission was 22% instead of 20%?" Build the duplicate, run an audit on a draft basis, and compare.
 
 ## Filters on the list page
 
-The **Business Models** list defaults to hiding archived models. The status filter dropdown has four options:
+The **Business Models** list defaults to hiding archived models. The status filter dropdown has four options: **All (excl. Archived)**, **Active**, **Inactive**, and **Archived**. Use the column visibility picker to show or hide columns; your selection persists across visits.
 
-- **All (excl. Archived)** - default.
-- **Active** - models in use.
-- **Inactive** - models without assignments.
-- **Archived** - hidden models.
+## Diagnostics
 
-Use the column visibility picker to add or remove **Name**, **Version**, **Status**, **Listings**, **Activation Date**, **Created**. Your column choice persists across visits via local storage.
+A few interactions trigger a diagnostics batch run in the background:
 
-## Diagnostics batch behavior
+- First-time activation of a draft model.
+- Property assignment to an active model.
+- A configuration edit on an active model (the version bump).
 
-A few interactions trigger a diagnostics batch run:
-
-- **Draft -> Active** transition (first activation).
-- **Property assignment** to an active model.
-- **Version bump** on an active model.
-
-The batch runs in the background. You can check progress on the **Home** page under the **Accounting Diagnostic Job Runs** section.
-
-If a batch is interrupted (worker restart, transient error), it is safe to retry - PX is idempotent on diagnostics.
+Progress is visible on the **Home** page under **Accounting Diagnostic Job Runs**. If a batch is interrupted, retrying is safe - diagnostics are idempotent.

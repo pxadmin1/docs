@@ -1,95 +1,43 @@
 ---
 title: "Commission"
-description: "Configure confirmed and canceled commission rates, recognition, owner VAT/GST, and channel overrides."
+description: "Configure how PX represents the commission you take off each booking."
 ---
 
 The Commission section of a business model defines what the PMC takes off the top of each booking. PX validates calculated commission against your PMS during audits and flags any drift.
 
 ## Three sub-sections
 
-- **Confirmed reservations** - the standard path.
-- **Canceled reservations** - cancellation-specific rules (often a lower rate).
-- **Minimum commission** - a floor that ensures you never earn less than a fixed amount per booking.
+- **Confirmed reservations** - the standard path. The rate and timing for normal bookings.
+- **Canceled reservations** - cancellation-specific rules, often a lower rate.
+- **Minimum commission** - an optional floor that ensures you never earn less than a fixed amount per booking.
 
-## Confirmed reservations
+The in-app wizard walks through each sub-section with field-level help.
 
-| Field | Meaning |
-|---|---|
-| **Enable** | Turn on commission for confirmed bookings. |
-| **Commission %** | Default rate, for example `20` for 20%. |
-| **Recognition** | When commission is recognized in the GL: `check_in`, `check_out`, or `nightly` (spread across the stay). |
-| **Owner tax** | Optional. Charge the owner an extra VAT or GST on top of commission. Applied at the same recognition date as commission. |
-| **Channel conditions** | Per-channel overrides - useful when channels have different settlement terms. |
+## Confirmed and canceled
 
-### Owner tax fields
+For both, you specify:
 
-If you enable owner tax:
+- **Default rate** - the commission percent applied to bookings on this model.
+- **Recognition** - when commission revenue is recognized in the GL. Confirmed bookings recognize at check-in, check-out, or per-night. Canceled bookings recognize at the cancellation date or the original check-in date.
+- **Owner tax (optional)** - charges the owner an additional VAT or GST on top of commission, common in jurisdictions that require it.
+- **Channel conditions (optional)** - per-channel overrides for channels that settle at a different rate. If a booking's channel matches a condition, that condition's rate replaces the default.
 
-- **Name** - what to call the line in the GL (`Owner GST 5%`, `Owner VAT 20%`).
-- **Category** - typically `owner_gst` or `owner_vat`. PX uses this to group similar lines on owner statements.
-- **Description** - free-text notes.
-- **Value %** - the tax rate.
-
-Recognition for owner tax is fixed: it always uses the accommodation fare's recognition date, regardless of the commission recognition you chose.
-
-### Channel conditions
-
-Click **Add channel condition** to create overrides:
-
-- **Channels** - one or more channel slugs (`airbnb2`, `bookingCom`, `vrbo`, `direct`).
-- **Commission %** - the rate for those channels.
-
-If a booking's channel matches a condition, that condition's rate replaces the default. Otherwise the default applies.
-
-## Canceled reservations
-
-Same fields as confirmed, with one difference:
-
-- **Recognition** options are `cancellation_date` (when the booking was canceled) or `original_check_in` (when the booking would have arrived).
-
-A typical setup is a lower rate (5-10% instead of 20%) recognized on `cancellation_date` because the work is done as soon as you process the cancellation.
-
-If you do not charge commission on cancellations, leave **Enable** off.
+A typical setup is a higher confirmed rate (say 20%) and a lower canceled rate (say 5-10%) that recognizes on the cancellation date.
 
 ## Minimum commission
 
-| Field | Meaning |
-|---|---|
-| **Enable** | Whether to enforce a floor. |
-| **Amount** | Numeric floor (for example `25`). |
-| **Currency** | Defaults to USD. |
-
-When the calculated commission is below the floor, PX bumps it up to the floor amount. The audit reports the minimum as the expected value when this happens, so you see the difference clearly.
+When the calculated commission falls below the floor you set, PX bumps it up to the floor amount. The audit reports the minimum as the expected value when this happens, so you see the difference clearly.
 
 ## Recognition timing in practice
 
-- **`check_in`** - revenue lands when guests arrive. Easy to reconcile against bank deposits.
-- **`check_out`** - revenue lands when guests leave. Useful when refunds are common between booking and check-in.
-- **`nightly`** - amount divided across nights and recognized day by day. Smooths long stays across month-end.
-- **`cancellation_date`** - cancellations recognized when processed.
-- **`original_check_in`** - cancellations recognized when arrival would have been (uncommon).
+- **Check-in** - revenue lands when guests arrive. Easy to reconcile against bank deposits.
+- **Check-out** - revenue lands when guests leave. Useful when refunds are common between booking and check-in.
+- **Per-night** - amount divided across nights. Smooths long stays across month-end.
 
-The audit's `RECOGNITION_DATE_ANOMALY` finding fires when the GL date does not match what your business model says it should be.
-
-## Channel slugs
-
-PX uses these slugs to identify channels:
-
-| Slug | Channel |
-|---|---|
-| `airbnb2` | Airbnb |
-| `bookingCom` | Booking.com |
-| `vrbo` | Vrbo |
-| `expedia` | Expedia |
-| `direct` | Direct booking |
-| `homeAway` | HomeAway (legacy) |
-
-If your PMS uses a slug PX does not recognize, the audit treats it as `direct` and applies the default commission rate.
+Pick the timing that matches how your accountant closes the period.
 
 ## Audit findings related to commission
 
-- **MISSING_COMMISSION** - PX expected commission but the booking has none.
-- **COMMISSION_MISMATCH** - calculated commission differs from what is recorded.
-- **COMMISSION_RATE_DRIFT** (OwnerRez) - the same channel appears with multiple different rates across bookings, suggesting a mid-period change.
+When commission disagrees with what the audit expected, you will see findings noting the expected amount, the actual amount, the difference, and a reasoning string showing PX's calculation. The most common causes are channel-specific rate changes mid-period and configuration drift between PX and the PMS.
 
-Each finding includes the **expected** amount, the **actual** amount, the **difference**, and a **reasoning** string showing PX's calculation.
+See [Understanding findings](/audit/understanding-findings) for how to read these.

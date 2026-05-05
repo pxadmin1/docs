@@ -5,7 +5,7 @@ description: "How to read severity, expected vs actual, config source, and reaso
 
 Every finding in an audit answers four questions:
 
-1. **What went wrong?** - the finding type and description.
+1. **What went wrong?** - the finding name and short description.
 2. **How serious is it?** - the severity.
 3. **What was expected?** - PX's calculated value, with the source.
 4. **Why did PX expect that?** - the reasoning string.
@@ -16,40 +16,33 @@ Once you internalize these four, you can triage findings quickly.
 
 Three levels:
 
-- **Error** - a real discrepancy with a definite financial impact. Examples: missing payment on a booking, ledger out of balance, commission rate disagrees with config.
-- **Warning** - something looks off but may have an explanation. Examples: pet-related notes but no pet fee, payment recorded after departure, inferred catalog rule applied with wide tolerance.
-- **Info** - context for human review. Examples: a booking matches a manual exception you set up, a tax was suppressed because of Airbnb remittance.
+- **Error** - a real discrepancy with a definite financial impact. Fix or dismiss before closing the period.
+- **Warning** - something looks off but may have an explanation. Worth a human glance.
+- **Info** - context for human review. Often confirms PX is suppressing a check on purpose (Airbnb-remitted tax, manual exception, and so on).
 
-Filter by severity in the Findings Breakdown grid above the results table.
+You can filter the audit results by severity from the Findings Breakdown grid above the table.
 
 ## Expected, actual, and difference
 
-Each finding has:
+Each finding shows:
 
 - **Expected amount** - the value PX calculated.
 - **Actual amount** - the value recorded on the booking.
 - **Difference** - signed (positive when under-collected, negative when over-collected).
 
-The summary card at the top of the audit aggregates these into the **Verdict** - the net direction across all findings.
+The summary at the top of the audit aggregates these into the **Verdict** - the net direction across the run.
 
 ## Config source
 
-A short label identifying which configuration drove the expectation:
+A short label identifying which configuration drove the expectation. Examples:
 
-| Source | Meaning |
-|---|---|
-| `account_tax_config` | The tax came from your PMS's account-level taxes. |
-| `listing_tax_config` | The tax came from a listing-level override in your PMS. |
-| `channel_override` | A user channel sync override decided whether the tax applies. |
-| `airbnb_remittance` | The Airbnb tax remittance setting suppressed or required this tax. |
-| `business_model` | The business model drove the expectation (commissions, recurring charges). |
-| `pmc_config.commission_setup.confirmed` | The confirmed commission rule. |
-| `pmc_config.commission_setup.canceled` | The canceled commission rule. |
-| `pmc_config.trust_account_setup.income_charges[N]` | A specific recurring income charge. |
-| `ownerrez_catalog` | The OwnerRez Catalog (for OwnerRez accounts). |
-| `derived` | PX inferred the expectation from booking data alone. |
+- The tax came from your PMS's account-level taxes.
+- The tax came from a listing-level override.
+- A user channel sync override decided whether the tax applies.
+- The Airbnb tax remittance setting suppressed or required a tax.
+- The business model drove the expectation.
 
-This tells you exactly where to look if you want to change the expectation.
+The config source tells you exactly where to look if you want to change the expectation. The in-app finding card shows the precise source for every finding.
 
 ## Reasoning
 
@@ -62,60 +55,7 @@ expected = 0.085 * (accommodation_fare + cleaning_fee)
          = 114.75
 ```
 
-When the reasoning is shown inline, the formula uses real values from the booking. This is usually enough to understand whether the issue is the booking or the configuration.
-
-## Finding types you will see most often
-
-### Tax
-
-- **MISSING_TAX** - PX expected a tax that is not on the booking.
-- **UNEXPECTED_TAX** - the booking has a tax that is not in your configuration.
-- **TAX_AMOUNT_MISMATCH** - the tax is present but the amount is wrong.
-- **TAX_CALCULATION_MISMATCH** (OwnerRez) - the tax math does not reconcile against catalog rules.
-
-### Fee
-
-- **MISSING_FEE** - the business model expects a fee that is not on the booking.
-- **FEE_AMOUNT_MISMATCH** - the fee is present but the amount is wrong.
-- **MISSING_PET_FEE** / **PET_FEE_MISMATCH** - pet-specific.
-- **MISSING_EXTRA_GUEST_FEE** / **EXTRA_GUEST_FEE_MISMATCH** - extra guest specific.
-- **NOTES_SUGGEST_PET** / **PET_FEE_NEEDS_REVIEW** - PX detected pet keywords in notes but no pet fee was charged.
-- **HIDDEN_OTA_FEE** - Airbnb-specific. The Airbnb total does not equal the expected total.
-
-### Commission
-
-- **MISSING_COMMISSION** - commission expected but absent.
-- **COMMISSION_MISMATCH** - commission present but the amount is wrong.
-- **COMMISSION_RATE_DRIFT** (OwnerRez) - the same channel has multiple different rates across bookings.
-
-### Payment
-
-- **MISSING_PAYMENT** - balance > $0.01 but the booking is not flagged unpaid.
-- **OVERPAYMENT** - the guest paid more than the balance.
-- **NEGATIVE_BALANCE** - the booking shows a negative balance.
-- **PAYMENTS_TOTAL_MISMATCH** - sum of payments does not equal recorded total.
-- **REFUNDS_TOTAL_MISMATCH** - sum of refunds does not equal recorded refund total.
-- **ORPHAN_REFUND** - a refund without a corresponding payment.
-- **DUPLICATE_PAYMENT** - two payments that look like the same transaction.
-
-### Booking integrity
-
-- **REVENUE_INTEGRITY_MISMATCH** - sum of charges does not equal total amount.
-- **CHARGE_SPLIT_MISMATCH** - owner amount + commission amount on a charge does not equal the charge amount.
-- **ZERO_RENT_CHARGES** - active booking with no accommodation charge.
-- **MISSING_GUEST** - booking with no guest record.
-- **OVERLAPPING_BOOKINGS** - two confirmed bookings on the same property overlap in dates.
-- **PHANTOM_BOOKING** - past departure, $0 paid, still active status.
-
-### Ledger and accounting
-
-- **LEDGER_BALANCE_MISMATCH** - the postings PX modeled for audit do not balance.
-- **OWNER_PAYOUT_MISMATCH** - calculated owner payout does not match the recorded payout.
-- **RECOGNITION_DATE_ANOMALY** - a charge is recognized on the wrong date per the business model.
-
-### Catalog
-
-- **CATALOG_EMPTY** (OwnerRez only) - no confirmed catalog rules. Audit short-circuits.
+When the reasoning is shown inline, the formula uses real values from the booking. This is usually enough to understand whether the issue is in the booking or the configuration.
 
 ## How to triage a finding
 
@@ -132,9 +72,9 @@ Most findings fall into one of these three buckets. Findings that cannot be tria
 
 False positives happen most often when:
 
-- The PMS catalog is incomplete (very common on OwnerRez before catalog confirmation).
+- The PMS catalog is incomplete (most common when a PMS does not expose tax read APIs and the catalog has not been confirmed yet).
 - Channel sync overrides are missing for a channel that does not actually carry the tax.
 - Airbnb tax remittance is not configured.
 - A business model has a typo in commission percent or recurring charge category.
 
-In all these cases, fixing the configuration is the right answer - dismissing the finding only hides the symptom.
+In all these cases, fixing the configuration is the right answer. Dismissing the finding only hides the symptom.

@@ -1,100 +1,46 @@
 ---
-title: "Check categories"
-description: "Every check PX runs, organized by class and PMS."
+title: "What an audit checks"
+description: "The three classes of checks PX runs against your reservations."
 ---
 
-PX organizes audit checks into three classes:
+When you run an audit, PX inspects every reservation in scope and runs three classes of checks. The exact mix depends on your PMS - some checks rely on accounting data only certain PMSes expose - but every audit covers all three categories at a high level.
 
-- **Class 1** - cross-system validation. Compares the PMS's accounting engine against your business model. **Available on Guesty only** (OwnerRez has no built-in accounting engine).
-- **Class 2** - intra-data consistency. Validates that PMS-reported numbers reconcile against themselves and against your tax/commission configuration.
-- **Class 3** - business model validation. Validates that the business model's expectations hold across reservations.
+## Class 1 - cross-system validation
 
-PX runs checks in tiers within each class:
+When your PMS has a built-in accounting engine, PX cross-checks its postings against your business model. This catches discrepancies between what the PMS recorded and what your management agreement says should have happened.
 
-- **Tier 0 (canonical)** - taxes, fees, commissions. The core revenue checks.
-- **Tier 1 (deterministic findings)** - guest-driven fees (pet, extra guest).
-- **Tier 2 (signal-driven)** - keyword detection in notes (pet, event, party).
-- **Tier 4 (OTA anomalies)** - channel-specific oddities (Airbnb total mismatches).
+Class 1 is available where the PMS exposes a usable accounting feed. Where it is not, PX falls back to Class 2 and Class 3, which together cover the same ground using a different approach.
 
-## Guesty checks
+## Class 2 - data consistency
 
-Guesty has a built-in accounting engine, so PX runs all three classes.
+PX validates that the numbers your PMS reports reconcile against themselves and against your tax and commission configuration. Examples of what this catches:
 
-### Class 1 - cross-system validation
+- Taxes that should have been collected but were not.
+- Fees and commissions whose amounts do not match the configuration.
+- Bookings with payment anomalies (missing, duplicated, or unbalanced).
+- Bookings whose totals do not match the sum of their charges.
+- Calendar overlaps and bookings that look stale.
 
-- **AD ledger balance** - Guesty's accommodation deposit ledger balances.
-- **Ledger balance O+AP+C=0** - Guesty's owner + accounts payable + cash sum to zero.
-- **Journal entry date validation** - journal entry dates fall within reservation dates.
-- **Balance / cash / AD mismatches** - the various Guesty internal balances reconcile.
-- **Missing AD entries** - bookings expected to have accommodation deposit entries but lack them.
+Class 2 runs on every PMS PX supports.
 
-### Class 2 - intra-data consistency
+## Class 3 - business model validation
 
-- **Tier 0 - taxes** - amount, applicability (inclusive/exclusive, per-stay/per-night), stay-length filters, channel sync.
-- **Tier 0 - fees** - presence, amount calculation.
-- **Tier 0 - commissions** - rates against channel commission configuration.
-- **Tier 1 - missing pet fee** - `numberOfPets > 0` but no pet fee charged.
-- **Tier 1 - missing extra-guest fee** - `guests > accommodates` but no extra-guest fee charged.
-- **Tier 2 - notes scan** - keywords in notes/specialRequests trigger NOTES_SUGGEST_PET, PET_FEE_NEEDS_REVIEW.
-- **Tier 4 - Airbnb total mismatch** - HIDDEN_OTA_FEE when Airbnb total does not equal expected total.
+PX takes the per-charge data your PMS provides and checks it against the **business model** you have assigned. This is where ledger balance and owner statement reconciliation findings come from. Class 3 only runs for properties that have an assigned, active business model.
 
-### Class 3 - business model validation
+Class 3 covers questions like:
 
-Only runs when the property has an assigned active business model.
-
-- **Modeled ledger balance** - the postings PX models from your business model balance internally for audit purposes.
-- **Owner statement reconciliation** - calculated owner payout matches recorded payout.
-- **Recognition date validation** - charges land on the dates your business model specifies.
-- **Commission rate vs config** - commission rate matches the business model's commission_setup.
-
-## OwnerRez checks
-
-OwnerRez has no accounting engine, so Class 1 does not apply. Class 2 and Class 3 do all the work, with additional data-integrity checks compensating.
-
-### Class 2 - intra-data consistency
-
-All Tier 0/1/2 checks from Guesty plus:
-
-- **Revenue integrity** - sum of charges equals booking total amount.
-- **Charge split** - on each charge, owner amount + commission amount = charge amount.
-- **Zero rent** - active booking has accommodation charge > 0.
-- **Missing payment** - balance > $0.01 but booking is not flagged unpaid.
-- **Overpayment** - guest paid more than the booking total.
-- **Negative balance** - balance is negative.
-- **Cancellation audit** - canceled bookings have appropriate refunds (or are flagged as unrefunded).
-- **Overlapping bookings** - two confirmed bookings on the same property overlap.
-- **Phantom booking** - past departure, $0 paid, status still active.
-- **Commission rate drift** - same property + channel pair has multiple commission rates across bookings.
-- **Tax calculation mismatch** - tax math does not reconcile against catalog rules.
-- **Payment / refund totals** - PAYMENTS_TOTAL_MISMATCH, REFUNDS_TOTAL_MISMATCH.
-- **Orphan refund** - refund without a matching payment.
-- **Duplicate payment** - two payments that look like the same transaction.
-- **Deposits with non-zero adjustments** - bank deposit lines with unexpected adjustments.
-
-### Class 3 - business model validation
-
-Same set as Guesty, but the audit works from per-charge data instead of journal entries:
-
-- Modeled ledger balance (audit-internal, not a published ledger).
-- Owner payout reconciliation.
-- Recognition date validation.
-- Commission rate vs business model.
-
-### Catalog short-circuit
-
-If the OwnerRez catalog has no confirmed/user-added rows for a relevant kind, the audit emits a single `CATALOG_EMPTY` finding instead of running per-reservation checks. Confirming at least one tax row clears the short-circuit.
+- Does the owner payout we calculated match the payout the PMS recorded?
+- Are charges recognized on the dates the business model says they should be?
+- Does the commission rate applied match the rate in the model?
 
 ## What does *not* get checked
 
-PX does not check:
+PX is an accounting and trust audit tool. It does not check pricing decisions, channel performance, forecasting, marketing, or guest communication. Pricing and revenue management belong elsewhere.
 
-- Pricing decisions (was this rate optimal?).
-- Channel performance (which channel is most profitable?).
-- Forecasting or pacing.
-- Marketing, reviews, or guest communication quality.
+## Severity and verdicts
 
-PX is an accounting and trust audit tool. Pricing and revenue management belong elsewhere.
+Every check produces a finding with a severity (`error`, `warning`, or `info`) and a contribution to the audit's overall verdict (`clean`, `underpaid`, or `overpaid`). See [Understanding findings](/audit/understanding-findings) for how to read individual findings.
 
-## Adding new checks
+## In-product reference
 
-PX's check framework is extensible. New finding types ship in product updates - watch for release notes. If you have a check you wish PX ran, write to support@pxaccounting.com with the use case and an example reservation that should fire it.
+The in-app audit results page shows the specific check name, expected amount, actual amount, and reasoning for every finding. That is the canonical reference for what a given finding means and how to triage it.

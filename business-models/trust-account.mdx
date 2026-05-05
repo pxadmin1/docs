@@ -3,105 +3,45 @@ title: "Trust account"
 description: "Recurring income and expense charges, with PMC vs owner allocation."
 ---
 
-Trust account charges are recurring postings PX makes for every reservation. Use them to capture cleaning, linen, maintenance reserves, owner-paid insurance, and other recurring items - things that always happen but live outside the standard rental commission calculation.
+Trust account charges are recurring postings PX expects on every reservation. Use them to capture cleaning, linen, maintenance reserves, owner-paid insurance, and other recurring items - things that always happen but live outside the standard rental commission calculation.
 
 ## Two buckets
 
-- **Income charges** - things owed to the PMC or vendors. They credit the trust account.
+- **Income charges** - things owed to the PMC or to a vendor. They credit the trust account.
 - **Expense charges** - things owed back to owners or paid out of trust. They debit the trust account.
 
 Each charge is independent. You can have as many of each as you need.
 
-## Adding a charge
+## What you set per charge
 
-Click **Add charge** in either bucket to open the dialog. Every charge has the same set of fields.
+The in-app **Add charge** dialog walks through each field with inline help. Conceptually, every charge captures:
 
-### Identification
+- A **name and category** for reporting and statement grouping.
+- **How the amount is determined** - either a fixed value you set, or the value taken from the matching PMS line item.
+- **When it is recognized** - on check-in, check-out, or spread across nights. Canceled bookings can use a different recognition.
+- **Who receives it** - the vendor (a third party like a cleaner), the owner, or split between them. The PMC's share is implied by what is left over.
+- **Optional VAT/GST on the charge** - billed to the owner.
+- **Channel conditions** - exclude specific channels where the charge does not apply.
 
-| Field | Meaning |
-|---|---|
-| **Name** | Display label like `Cleaning fee`, `Linen replenishment`, `Maintenance reserve`. |
-| **Category** | Bucket for reporting and excluded-items logic. |
-| **Description** | Free-text notes. |
+## A few worked examples
 
-### Amount
+**Cleaning kept by an external cleaner.** Expense, variable per stay, allocated to the vendor. The owner's payout is unaffected; the cleaner is paid from trust.
 
-| Field | Meaning |
-|---|---|
-| **Amount type** | `Fixed` - you set the value here. `Variable` - PX reads the value from the matching PMS line item. |
-| **Amount** | The numeric value (when fixed). |
-| **Amount is percent** | Toggle to interpret the amount as a percent of the matched line item rather than an absolute number. |
-| **Per** | `stay` - one occurrence per booking. `night` - per-night multiplier. |
+**Maintenance reserve, $50 per stay, owner-funded.** Expense, fixed at $50 per stay, allocated to the owner. The owner's payout is reduced by $50 each stay, accumulating in trust for repairs.
 
-Use **Variable** when the amount comes from your PMS - cleaning fees that vary by listing, for example. PX matches the line item by category and uses whatever amount the PMS recorded.
+**Linen fee, $10 per night, PMC-retained.** Income, fixed at $10 per night. The PMC retains the charge.
 
-### Recognition
-
-| Field | Meaning |
-|---|---|
-| **Recognition** | When the charge is recognized: `check_in`, `check_out`, or `nightly`. |
-| **Canceled recognition** | Recognition for canceled bookings. Leave blank to inherit from the confirmed setting. |
-
-### Allocation
-
-This is the trickiest part. **Allocation** determines who is on the receiving side of the posting.
-
-- **`vendor`** - the charge goes to a third party (a cleaner, a maintenance company). The vendor field captures their share.
-- **`owner`** - the charge goes back to the owner.
-- **`both`** - the charge is split between vendor and owner (and the PMC's share is implied by what is left over).
-
-When allocation is `both`, both vendor and owner values are used:
-
-| Field | Meaning |
-|---|---|
-| **Vendor value / vendor is percent** | The vendor's share, in fixed amount or percent. |
-| **Owner value / owner is percent** | The owner's share, in fixed amount or percent. |
-| **PMC share** | Implied (100% minus vendor and owner when using percent). |
-
-The math constraint when using percentages: PMC + vendor + owner must equal 100%.
-
-### Owner VAT/GST
-
-| Field | Meaning |
-|---|---|
-| **Charge owner VAT/GST** | Optional. Apply a VAT or GST on top of this charge, billed to the owner. |
-| **Name / Category / Description** | Same as commission's owner tax fields. |
-| **Value %** | The tax rate. |
-
-This is independent of the commission's owner tax setting - you can apply VAT/GST on commission only, on a charge only, or on both.
-
-### Conditions
-
-| Field | Meaning |
-|---|---|
-| **Excluded channels** | Channels where this charge does not apply. Leave empty to apply to all channels. |
-
-Useful for channel-specific behavior. For example, exclude `airbnb2` from a cleaning fee charge if Airbnb collects cleaning fees as part of its host fee.
-
-## Examples
-
-**Cleaning kept by an external cleaner.** Type: expense. Amount: variable, per stay. Allocation: vendor (100%). The PMC and owner see no impact - cleaning passes through to the cleaner.
-
-**Maintenance reserve, $50 per stay, owner-funded.** Type: expense. Amount: $50 fixed, per stay. Allocation: owner. The owner's payout is reduced by $50 each stay, accumulating in trust for repairs.
-
-**Linen fee, $10 per night, PMC-retained.** Type: income. Amount: $10 fixed, per night. Allocation: leave defaults so the PMC retains the charge.
-
-**Resort fee, split 60% owner / 40% PMC.** Type: income. Amount: variable, per stay. Allocation: both. Owner value: 60%, owner is percent. Vendor value: 0%. PMC share: 40% (implied).
+**Resort fee, split 60% owner / 40% PMC.** Income, variable per stay, split allocation. Owner takes 60%, PMC takes 40% (implied).
 
 ## Audit findings related to trust account
 
-- **MISSING_FEE** - the business model expects a charge but the booking does not have one.
-- **FEE_AMOUNT_MISMATCH** - the charge is present but the amount differs from the model's calculation.
-- **MISSING_PET_FEE / EXTRA_GUEST_FEE** - specialized findings for guest-driven fees.
-- **NOTES_SUGGEST_PET / PET_FEE_NEEDS_REVIEW** - PX detected pet-related keywords in the booking notes but no pet fee was charged.
-
-These findings include the booking ID, the expected amount, the actual amount, and reasoning that explains how the expected value was computed.
+If the business model expects a charge that is missing on a booking, or the amount differs from the model's calculation, you will see findings on the property detail page and in audits. Each finding includes the expected amount, the actual amount, and a reasoning string showing how the expected value was computed.
 
 ## When trust account becomes essential
 
-Trust account configuration is what enables PX's ledger balance and owner statement reconciliation findings. Without trust account charges set up:
+Trust account configuration is what enables PX's owner statement reconciliation findings. Without it:
 
 - Audits still detect data integrity issues (zero rent, payment anomalies, missing payments).
-- Audits will not detect that an owner statement is off by $50 because a maintenance reserve was never posted.
+- Audits will not detect that an owner statement is off because a recurring charge was never posted.
 
-The latter category is usually what catches the most expensive operational mistakes, so investing in trust account configuration pays back quickly.
+The latter category catches the most expensive operational mistakes, so investing in trust account configuration pays back quickly.

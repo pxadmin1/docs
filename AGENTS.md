@@ -1,4 +1,4 @@
-# PX Accounting documentation
+# PX Accounting User Guide
 
 This is the end-user documentation site for PX Accounting (https://pxapp.net), built on [Mintlify](https://mintlify.com) and published at https://docs.pxaccounting.com.
 

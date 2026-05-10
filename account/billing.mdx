@@ -50,17 +50,6 @@ PX bills monthly based on:
 
 Invoices are generated at the start of each billing cycle and charged automatically against the saved payment method. You can view invoices and receipts in your Stripe customer portal (link sent via email after payment).
 
-## Webhook reliability
-
-PX listens for Stripe webhooks to keep billing state in sync. The most common events processed:
-
-- `payment_intent.succeeded` - payment confirmed.
-- `payment_intent.payment_failed` - payment declined.
-- `customer.updated` - email or other details changed.
-- `setup_intent.succeeded` - new payment method saved.
-
-If a webhook is delayed (rare), the Billing card may briefly show stale state. Refresh the page to force a re-fetch.
-
 ## Failed payments
 
 When a charge fails:
@@ -78,13 +67,3 @@ Stripe emails receipts after every successful charge. To resend a receipt:
 3. Click **Email receipt**.
 
 You can also view all invoices and download PDFs from the portal.
-
-## Test cards (for sandbox accounts)
-
-If you are on a PX sandbox or trial:
-
-- **Success** - `4242 4242 4242 4242`
-- **Requires 3DS authentication** - `4000 0025 0000 3155`
-- **Declined** - `4000 0000 0000 0002`
-
-Use any future expiry and any 3-digit CVC. These are Stripe test cards - they only work in sandbox mode.

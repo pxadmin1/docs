@@ -3,11 +3,11 @@ title: "Connect Hostfully"
 description: "Get your Hostfully API key and connect it to PX Accounting."
 ---
 
-<Note>
-  Hostfully is not connectable yet. The flow described below is the planned design - the **PMS Connection** card in Settings currently lists Guesty and OwnerRez only. Use this page to see what credentials to gather and what data PX will read once Hostfully ships.
-</Note>
+PX Accounting connects to Hostfully with an agency-level API key. The key sends as the `X-HOSTFULLY-APIKEY` HTTP header.
 
-PX Accounting will connect to Hostfully with an agency-level API key. The key sends as the `X-HOSTFULLY-APIKEY` HTTP header.
+<Frame caption="Selecting Hostfully on the PMS Connection card">
+  ![Hostfully in the PMS picker](/images/screenshots/pms-picker-hostfully.png)
+</Frame>
 
 ## Before you start
 
@@ -40,13 +40,63 @@ PX validates the key and the **Integration Status** panel shows three lights: **
 
 ## What PX reads from Hostfully
 
-| Data | When fetched |
-|---|---|
-| Listings | On connect and on demand |
-| Reservations | On demand |
-| Charges, payments | On demand |
-| Tax setup | Read directly from Hostfully |
-| Owner records | When present |
+PX has read-only access. It never writes back to Hostfully.
+
+### Properties
+
+- Property ID (UID)
+- Name
+- Full address (street, city, state, zip, country, latitude / longitude)
+- Bedrooms, bathrooms, accommodates
+- Property type
+- Currency
+- Active flag
+- Thumbnail picture
+
+### Owners
+
+When the agency exposes owner records, PX reads:
+
+- Owner ID
+- First name, last name
+- Email address
+- Phone number (when present)
+- Properties managed for this owner
+
+### Reservations
+
+- Reservation UID and property reference
+- Status (Confirmed, Pending, Canceled, Inquiry, Blocked)
+- Check-in and check-out dates
+- Booking date
+- Guest first name, last name, email, phone
+- Guest count, adults, children
+- Channel / source (Airbnb, Vrbo, Booking.com, direct, etc.)
+- Confirmation code
+- Currency
+- Total amount, total paid, balance due, total refunded
+- Cancellation date and policy
+
+### Per-charge financial data
+
+- Per-charge amount, type (accommodation, cleaning, fee, tax, expense), description, taxable flag
+- Per-night accommodation breakdown
+- Per-reservation aggregates: subtotal, total taxes, channel commission, owner payout
+- Payment records: amount, date, method
+- Refund records: amount, date, linked payment
+
+### Tax configuration
+
+PX reads agency-level taxes from Hostfully: rates, names, applicability per property. Channel sync overrides apply on top inside PX.
+
+### Webhook events
+
+PX subscribes to Hostfully webhooks for:
+
+- Lead / quote created
+- Reservation created, updated, canceled
+- Property created, updated
+- Payment created, refunded
 
 ## Removing the connection
 

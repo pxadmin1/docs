@@ -5,6 +5,10 @@ description: "Generate a Hospitable Personal Access Token and connect it to PX A
 
 PX Accounting connects to Hospitable (formerly Smartbnb) with a Personal Access Token (PAT) you generate inside Hospitable.
 
+<Frame caption="Selecting Hospitable on the PMS Connection card">
+  ![Hospitable in the PMS picker](/images/screenshots/pms-picker-hospitable.png)
+</Frame>
+
 ## Before you start
 
 You will need:
@@ -39,13 +43,55 @@ PX validates the token and the **Integration Status** panel shows three lights: 
 
 ## What PX reads from Hospitable
 
-| Data | When fetched |
-|---|---|
-| Listings | On connect and on demand |
-| Reservations | On demand |
-| Per-night pricing breakdown | On demand |
-| Guest / host financial split | On demand |
-| Tax setup | Read directly from Hospitable |
+PX has read-only access. It never writes back to Hospitable.
+
+### Properties
+
+- Listing ID
+- Name (internal nickname or public title)
+- Full address (street, city, state, postal code, country)
+- Bedrooms, bathrooms, max guests
+- Property type
+- Currency
+- Active / inactive status
+- Thumbnail picture
+
+### Owners
+
+Hospitable does not expose owner records as a dedicated entity. Owner mapping is managed directly in PX.
+
+### Reservations
+
+- Reservation ID and listing reference
+- Status (Accepted, Pending, Canceled, Checkpoint)
+- Check-in and check-out dates
+- Booking date
+- Guest first name, last name, email, phone (subject to channel masking)
+- Guest count, adults, children, infants
+- Channel / source (Airbnb, Vrbo, Booking.com, direct)
+- Channel reservation number / confirmation code
+- Currency
+- Total amount, total paid, balance due, total refunded
+
+### Per-charge financial data
+
+- Per-night pricing breakdown (base rate per night)
+- Cleaning fee, pet fee, extra-guest fee, custom fees
+- Taxes (per type, per amount)
+- Channel commission and host service fee
+- Guest-paid total vs. host payout breakdown
+
+### Tax configuration
+
+PX reads tax settings directly from Hospitable: rates, names, applicability per listing. Channel sync overrides apply on top inside PX.
+
+### Webhook events
+
+PX subscribes to Hospitable webhooks for:
+
+- Reservation created, updated, canceled
+- Listing created, updated
+- Channel connection changes
 
 Hospitable exposes per-night pricing (not just the stay average) and labeled line items, so audits can verify accommodation amounts to the day.
 

@@ -5,6 +5,10 @@ description: "Authorize PX Accounting with OwnerRez and build your audit baselin
 
 OwnerRez uses a one-click OAuth flow. There is nothing to copy and paste - you click a button in PX, sign in to OwnerRez, and grant access.
 
+<Frame caption="Selecting OwnerRez on the PMS Connection card">
+  ![OwnerRez in the PMS picker](/images/screenshots/pms-picker-ownerrez.png)
+</Frame>
+
 ## Before you start
 
 You will need:
@@ -64,14 +68,75 @@ See [OwnerRez Catalog](/pms-configuration/ownerrez-catalog) for the full UI walk
 
 ## What PX reads from OwnerRez
 
-| Data | When fetched |
-|---|---|
-| Properties | On sync |
-| Bookings | On demand (property detail, Reports, Audits) |
-| Charges (per booking) | On demand |
-| Payments, refunds, deposits | Cached as ingested; webhooks update them in real time |
-| Owner records | On owner sync |
-| Catalog (taxes, fees, commissions) | Inferred from booking history; you confirm |
+PX has read-only access. It never writes back to OwnerRez.
+
+### Properties
+
+- Property ID
+- Name
+- Full address (street1, street2, city, state, postal code, country)
+- Bedrooms, bathrooms, max guests
+- Currency
+- Owner ID (mapped to the Owner record below)
+
+### Owners
+
+- Owner ID
+- First name, last name (parsed from the full name when needed)
+- Email address
+- Properties owned (list of property IDs)
+
+### Reservations (bookings)
+
+- Booking ID and property reference
+- Status (Active, Pending, Canceled, Quote - mapped to PX's confirmed / inquiry / canceled / pending)
+- Check-in and check-out dates
+- Guest ID, guest name (enriched from `/v2/guests/{id}` when available)
+- Guest count
+- Channel / listing site (Airbnb, Vrbo, Booking.com, direct, etc.)
+- Platform reservation number (the channel's confirmation, when present)
+- Confirmation code
+- Currency
+- Total amount, total paid, balance due, total refunded, total host fees
+- Booked date, created and updated timestamps
+- Owner ID
+- Block flag (true for blocked dates rather than guest stays)
+- Canceled date, cancellation policy snapshot
+
+### Per-charge financial data
+
+For each charge on a booking:
+
+- Amount, type (accommodation / surcharge / tax / expense), description
+- Per-charge owner-vs-commission split: owner amount, commission amount, commission percent
+- Taxable flag
+- Source flags: inherited from account vs. property-overridden, channel-managed flag, raw position
+
+For each payment, refund, and deposit (read separately):
+
+- **Payments** - payment ID, booking, amount, collected date, type, deposited flag, total fees.
+- **Refunds** - refund ID, booking, amount, paid date, deposited flag, linked payment ID.
+- **Deposits** (payouts from the processor) - deposit ID, deposit date, processor, status, external deposit number, totals, individual transactions, fees, and adjustments.
+
+### Tax configuration
+
+OwnerRez's API does not expose your tax catalog, so PX:
+
+1. Scans the last 18 months of bookings.
+2. Infers a catalog of taxes, fees, and commissions from the line items it sees.
+3. Asks you to confirm each entry.
+
+You manage this on the **PMS Configuration** page under **OwnerRez Catalog**. The OwnerRez UI itself remains the system of record - PX's catalog is your audit baseline.
+
+### Webhook events
+
+PX subscribes to OwnerRez webhooks:
+
+- `entity_create` / `entity_update` on **booking** - re-ingests charges, payments, refunds, and deposits for that booking.
+- `entity_create` / `entity_update` on **property** - re-fetches the property.
+- `entity_create` / `entity_update` on **payment**, **refund**, or **deposit** - re-ingests financials for the linked booking.
+- `entity_delete` on booking, property, guest, or inquiry - removes the record from PX.
+- `application_authorization_revoked` - tears down the OAuth credentials cleanly.
 
 ## Removing the connection
 

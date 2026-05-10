@@ -5,6 +5,10 @@ description: "Generate Guesty API credentials and connect them to PX Accounting.
 
 PX Accounting connects to Guesty using the **Open API** OAuth flow. You will paste a Client ID and Client Secret into PX, and PX exchanges them for an access token that it stores encrypted.
 
+<Frame caption="Selecting Guesty on the PMS Connection card">
+  ![Guesty in the PMS picker](/images/screenshots/pms-picker-guesty.png)
+</Frame>
+
 ## Before you start
 
 You will need:
@@ -49,15 +53,54 @@ If any light is red, click **Refresh** to retry. The error message under each li
 
 ## What PX reads from Guesty
 
-| Data | When fetched |
-|---|---|
-| Listings | On sync (Properties page) |
-| Listing config: fees, taxes, channel commissions | On demand (PMS Configuration page) |
-| Reservations | On demand (property detail Reservations tab, Reports, Audits) |
-| Journal entries (per reservation) | On demand (folio modal, Audits) |
-| Owners | On owner sync |
+PX has read-only access. It never writes back to Guesty.
 
-PX caches Guesty journal entries for 30 days. They auto-purge after that to keep your data fresh.
+### Properties
+
+- Listing ID
+- Name (nickname first, then title)
+- Full address (street, city, state, postal code, country)
+- Bedrooms, bathrooms, accommodates (max guest count)
+- Currency
+- Cleaning fee (account-level default)
+- Active / inactive status
+- Thumbnail picture
+
+### Owners
+
+Guesty's API does not expose owner records, so PX does not pull owners from Guesty. Owner mapping is managed directly in PX.
+
+### Reservations
+
+- Reservation ID and listing reference
+- Status (Confirmed, Pending, Canceled, Inquiry - mapped from Guesty's status field)
+- Check-in and check-out dates
+- Booking date
+- Guest name
+- Guest count
+- Channel / source (Airbnb, Vrbo, Booking.com, direct, etc.)
+- Confirmation code
+- Currency
+- Total amount, total paid, balance due, total refunded
+- Cancellation: canceled date, canceled-by, cancellation reason, cancellation policy
+
+### Per-charge financial data
+
+- Per-charge amount, type (accommodation, fee, expense, tax), description, taxable flag
+- Per-night accommodation breakdown (base price per night)
+- Per-reservation aggregates: fare accommodation, fare cleaning, total taxes, subtotal, host service fee, net income
+
+### Tax configuration
+
+PX reads taxes directly from Guesty (account-level + per-listing) - rates, applicability, and metadata. Tax Configuration is a live mirror; changes you make in Guesty appear in PX after clicking **Refresh from PMS**. Channel sync overrides and Airbnb tax remittance are then layered on top inside PX.
+
+### Webhook events
+
+PX subscribes to these Guesty webhooks:
+
+- `listing.new`, `listing.updated`, `listing.removed` - re-fetches the listing.
+- `reservation.new`, `reservation.updated` - re-fetches the reservation.
+- `payments.*` (received, failed, refunded, overdue, dispute, authentication, etc.) - acknowledged. Financial data is read from the reservation snapshot, not the webhook payload, so a missed payment webhook never causes PX to lose data.
 
 ## Removing the connection
 

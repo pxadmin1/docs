@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "willow",
-  "name": "PX Accounting",
+  "name": "PX Documentation",
   "description": "Set up your PMS, configure business models and taxes, and audit every reservation - the end-user guide for PX Accounting.",
   "colors": {
     "primary": "#166E3F",
@@ -115,13 +115,6 @@
           "audit/understanding-findings",
           "audit/check-categories",
           "audit/export-pdf"
-        ]
-      },
-      {
-        "group": "Reports",
-        "expanded": true,
-        "pages": [
-          "reports/financial-report"
         ]
       },
       {

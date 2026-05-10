@@ -5,6 +5,10 @@ description: "Get your Uplisting API key and connect it to PX Accounting."
 
 PX Accounting connects to Uplisting with an API key from your Uplisting account.
 
+<Frame caption="Selecting Uplisting on the PMS Connection card">
+  ![Uplisting in the PMS picker](/images/screenshots/pms-picker-uplisting.png)
+</Frame>
+
 ## Before you start
 
 You will need:
@@ -36,12 +40,60 @@ PX validates the key and the **Integration Status** panel shows three lights: **
 
 ## What PX reads from Uplisting
 
-| Data | When fetched |
-|---|---|
-| Listings | On connect and on demand |
-| Reservations | On demand |
-| Charges, payments | On demand |
-| Tax setup | Read directly from Uplisting |
+PX has read-only access. It never writes back to Uplisting.
+
+### Properties
+
+- Listing ID
+- Name (internal nickname or public title)
+- Full address (street, city, state, postal code, country)
+- Bedrooms, bathrooms, max guests
+- Property type
+- Currency
+- Active / inactive status
+- Thumbnail picture
+
+### Owners
+
+Uplisting exposes an owner record per property when configured. When present PX reads:
+
+- Owner ID
+- First name, last name
+- Email address
+- Phone number
+- Properties owned (mapping)
+
+### Reservations
+
+- Booking ID and listing reference
+- Status (Confirmed, Pending, Canceled, Inquiry)
+- Check-in and check-out dates
+- Booking date
+- Guest first name, last name, email, phone
+- Guest count, adults, children
+- Channel / source (Airbnb, Vrbo, Booking.com, direct, etc.)
+- Confirmation code, channel booking ID
+- Currency
+- Total amount, total paid, balance due, total refunded
+
+### Per-charge financial data
+
+- Per-line amount, type (accommodation, cleaning, extra fee, tax, discount), description, taxable flag
+- Per-night accommodation breakdown
+- Per-reservation aggregates: subtotal, total taxes, channel fee, payout
+- Payment records: amount, date, method, status
+
+### Tax configuration
+
+PX reads tax settings directly from Uplisting: rates, names, applicability per listing. Channel sync overrides apply on top inside PX.
+
+### Webhook events
+
+PX subscribes to Uplisting webhooks for:
+
+- Booking created, updated, canceled
+- Listing created, updated
+- Payment received, refunded
 
 ## Removing the connection
 

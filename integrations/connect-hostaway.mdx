@@ -3,11 +3,11 @@ title: "Connect Hostaway"
 description: "Generate a Hostaway API key and connect it to PX Accounting."
 ---
 
-<Note>
-  Hostaway is not connectable yet. The flow described below is the planned design - the **PMS Connection** card in Settings currently lists Guesty and OwnerRez only. Use this page to see what credentials to gather and what data PX will read once Hostaway ships.
-</Note>
+PX Accounting connects to Hostaway with an Account ID and a Secret Key generated inside Hostaway.
 
-PX Accounting will connect to Hostaway with an Account ID and a Secret Key generated inside Hostaway.
+<Frame caption="Selecting Hostaway on the PMS Connection card">
+  ![Hostaway in the PMS picker](/images/screenshots/pms-picker-hostaway.png)
+</Frame>
 
 ## Before you start
 
@@ -42,15 +42,65 @@ PX validates the credentials and the **Integration Status** panel shows three li
 
 ## What PX reads from Hostaway
 
-| Data | When fetched |
-|---|---|
-| Listings | On connect and on demand |
-| Reservations | On demand |
-| Per-charge financial fields | On demand |
-| Tax setup | Read directly from Hostaway |
-| Owner records | When present |
+PX has read-only access. It never writes back to Hostaway.
 
-Hostaway exposes 60+ granular finance fields per reservation, so audits cover taxes, fees, and commissions in detail without inference.
+### Properties
+
+- Listing ID
+- Name (internal listing name)
+- Full address (street, city, state, postal code, country, latitude / longitude)
+- Bedrooms, bathrooms, max guests
+- Property type
+- Currency
+- Cleaning fee, base nightly rate, minimum-stay default
+- Active / inactive status
+- Thumbnail picture
+
+### Owners
+
+When the Hostaway account exposes owner records, PX reads:
+
+- Owner ID
+- First name, last name
+- Email address
+- Phone number (when present)
+- Properties owned (mapping)
+
+### Reservations
+
+- Reservation ID and listing reference
+- Status (Confirmed, Pending, Canceled, Inquiry)
+- Check-in and check-out dates
+- Booking date
+- Guest first name, last name, email, phone (when shared by the channel)
+- Guest count, adults, children
+- Channel / source (Airbnb, Vrbo, Booking.com, direct, etc.)
+- Confirmation code, channel reservation number
+- Currency
+- Total amount, total paid, balance due, total refunded
+- Cancellation: canceled date, canceled-by, cancellation policy, fee
+
+### Per-charge financial data
+
+Hostaway exposes 60+ granular finance fields per reservation. PX reads:
+
+- Per-charge amount, type (accommodation, cleaning, extra fees, taxes), description, taxable flag
+- Per-night accommodation breakdown
+- Per-reservation aggregates: subtotal, total taxes, host service fee, channel commission, owner payout, net income
+- Channel and platform fees (Airbnb host fee, Vrbo service fee, etc.)
+- Security deposit and damage protection lines
+
+### Tax configuration
+
+PX reads taxes directly from Hostaway: account-level rates, applicability, and per-channel sync settings. Channel sync overrides and Airbnb tax remittance can layer on top inside PX.
+
+### Webhook events
+
+PX subscribes to Hostaway webhooks for:
+
+- Listing created, updated, deleted
+- Reservation created, updated, canceled
+- Payment received, refunded
 
 ## Removing the connection
 

@@ -271,6 +271,29 @@ async function captureBusinessModelWizard(page: Page): Promise<void> {
   );
 }
 
+// --- Flow 3: Property detail page -------------------------------------------
+
+async function capturePropertyDetail(page: Page): Promise<void> {
+  console.log("Capturing property detail page...");
+  await page.goto(`${BASE_URL}/properties`, { waitUntil: "domcontentloaded" });
+  // Property rows are <tr> with onClick handlers (not <a>), so look for the
+  // table body once the listing has rendered.
+  const firstRow = page.locator("tbody tr").first();
+  await firstRow.waitFor({ timeout: 30_000 });
+  await page.waitForTimeout(800);
+
+  await firstRow.click();
+  await page.waitForURL(/\/properties\/[^/]+$/, { timeout: 30_000 });
+  await page
+    .getByRole("heading", { level: 1 })
+    .first()
+    .waitFor({ timeout: 30_000 })
+    .catch(() => {});
+  await page.waitForTimeout(1500);
+  await shoot(page, "property-detail.png");
+  console.log("  Captured property detail.");
+}
+
 // --- Entry point ------------------------------------------------------------
 
 async function main(): Promise<void> {
@@ -302,8 +325,13 @@ async function main(): Promise<void> {
     if (flow === "bm-wizard" || flow === "all") {
       await captureBusinessModelWizard(page);
     }
-    if (!["ownerrez-auth", "bm-wizard", "all"].includes(flow)) {
-      console.error(`Unknown flow: ${flow}. Use ownerrez-auth | bm-wizard | all.`);
+    if (flow === "property-detail" || flow === "all") {
+      await capturePropertyDetail(page);
+    }
+    if (!["ownerrez-auth", "bm-wizard", "property-detail", "all"].includes(flow)) {
+      console.error(
+        `Unknown flow: ${flow}. Use ownerrez-auth | bm-wizard | property-detail | all.`,
+      );
       process.exit(1);
     }
   } finally {

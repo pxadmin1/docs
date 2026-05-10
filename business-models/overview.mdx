@@ -37,27 +37,26 @@ A business model moves through four statuses:
 
 ## Versioning
 
-Editing the `pmc_config` of an active business model creates a **new version** of the model automatically. Old versions are immutable, so:
+Editing the rules of an active business model creates a **new version** automatically. Old versions stay frozen, so:
 
 - An audit run against a reservation always uses the version that was active on the reservation's check-in date.
 - Past results stay reproducible even after you update the model.
-- A `parent_id` chains versions together so you can browse history.
+- You can browse the version history from the model detail screen.
 
 A version bump triggers re-diagnostics for every assigned property so findings reflect the new rules going forward.
 
-## Anatomy of a model
+## What a model contains
 
 | Field | Required | Meaning |
 |---|---|---|
-| `name` | Yes | Display name. |
-| `description` | No | Free-text notes. |
-| `activation_date` | Yes (to run audits) | The date this model becomes effective. Earlier reservations use the prior model. |
-| `status` | Yes | draft / active / inactive / archived. |
-| `version` | Auto | Increments on each meaningful edit. |
-| `pmc_config.net_rental_income` | No | Income items, expense items, excluded items. |
-| `pmc_config.commission_setup` | No | Confirmed, canceled, and minimum commission rules. |
-| `pmc_config.trust_account_setup` | No | Recurring income and expense charges. |
-| `assigned_listings_count` | Auto | Number of properties using this model. |
+| Name | Yes | Display name. |
+| Description | No | Free-text notes. |
+| Activation date | Yes (to run audits) | The date this model becomes effective. Earlier reservations use the prior model. |
+| Status | Yes | Draft, Active, Inactive, or Archived. |
+| Net rental income | No | Income items, expense items, excluded items. |
+| Commission | No | Confirmed, canceled, and minimum commission rules. |
+| Trust account | No | Recurring income and expense charges. |
+| Assigned properties | Auto | Number of properties using this model. |
 
 ## Where to start
 

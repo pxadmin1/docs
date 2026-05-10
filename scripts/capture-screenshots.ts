@@ -62,7 +62,31 @@ async function ensureSignedIn(context: BrowserContext): Promise<Page> {
   }
 }
 
+// Inject CSS that hides UI elements we never want to ship in screenshots.
+// "AI Training" is a feature-flagged sidebar entry that should not appear in
+// public docs.
+async function applyDocCss(page: Page): Promise<void> {
+  await page.addStyleTag({
+    content: `
+      /* Hide any sidebar item whose visible text is exactly "AI Training". */
+      [class*="sidebar"] a:has(> span:is(:where(*))) { /* no-op for selector test */ }
+    `,
+  }).catch(() => {});
+  // The reliable approach: walk the DOM and hide matching elements directly.
+  await page.evaluate(() => {
+    const TEXTS_TO_HIDE = ["AI Training"];
+    const hide = (el: Element) => {
+      (el as HTMLElement).style.display = "none";
+    };
+    document.querySelectorAll("a, li, button, [role='menuitem']").forEach((el) => {
+      const txt = (el.textContent || "").trim();
+      if (TEXTS_TO_HIDE.includes(txt)) hide(el);
+    });
+  });
+}
+
 async function shoot(page: Page, name: string): Promise<void> {
+  await applyDocCss(page);
   const out = path.join(SCREENSHOT_DIR, name);
   await page.screenshot({ path: out, fullPage: false });
   console.log(`  saved ${name}`);

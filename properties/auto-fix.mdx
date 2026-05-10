@@ -33,7 +33,7 @@ Auto-fix resolves findings that are deterministic and safe - the kind of issue w
 - Closing duplicate findings that point to the same underlying issue.
 - Re-running checks after a PMS configuration change to clear obsolete findings.
 
-Auto-fix does **not** modify your PMS. PX is read-only against every supported PMS. Auto-fix only updates the PX-side issue status.
+When a finding requires a change in your PMS to actually be fixed (a missing tax line, a wrong commission rate on a booking, etc.), PX coordinates the change directly with your PMS on your behalf and then updates the finding status once the change is confirmed.
 
 ## When to leave auto-fix off
 

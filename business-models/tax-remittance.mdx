@@ -39,4 +39,4 @@ So the flow is:
 - **MISSING_TAX** - PX expected a tax based on the PMS configuration but the booking does not have one.
 - **UNEXPECTED_TAX** - the booking has a tax PX cannot map to your configuration.
 
-A finding includes a `config_source` field that tells you whether the expected value came from the PMS catalog, the channel override layer, or the business model's remittance configuration. This is useful when debugging "why did PX expect this amount?"
+Each finding tells you whether the expected value came from the PMS catalog, the channel override layer, or the business model's remittance configuration. This is useful when debugging "why did PX expect this amount?"

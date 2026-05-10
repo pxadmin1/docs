@@ -34,7 +34,7 @@ This is a deliberate constraint - it keeps audits unambiguous (PX always knows w
 
 ## Effective dates
 
-Business models have an `activation_date`. PX uses this date plus the property's assignment record to decide which model applies to a given reservation:
+Each business model has an activation date. PX uses this date plus the property's assignment record to decide which model applies to a given reservation:
 
 - The reservation's check-in date is compared against the active assignment's effective range.
 - If a property had Model A before March 1 and Model B after, March 1 is the cutoff and PX uses each model only for reservations whose check-in falls in its range.
@@ -71,6 +71,6 @@ When you assign on a **draft** model, no diagnostics run yet - PX waits for the 
 
 ## Re-assigning after a model edit
 
-If you edit an active model's `pmc_config`, PX creates a new version automatically. The version bump triggers a diagnostics re-run for every property assigned to the model so existing findings are recomputed against the new rules.
+If you edit an active model's rules, PX creates a new version automatically. The version bump triggers a diagnostics re-run for every property assigned to the model so existing findings are recomputed against the new rules.
 
 You do not have to re-assign properties - assignments persist across versions.

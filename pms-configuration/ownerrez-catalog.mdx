@@ -88,7 +88,7 @@ This usually takes 10-30 minutes for a typical PMC.
 1. Update the tax in OwnerRez.
 2. Open the catalog in PX.
 3. Edit the affected row, update the rate, and Save.
-4. The audit's `config_source` for findings on bookings after the change will report the new rate.
+4. From that point on, audit findings on bookings will be evaluated against the new rate.
 
 ### When PX detects a new pattern
 
@@ -98,12 +98,12 @@ PX may surface new `inferred` rows after future runs of **Detect from bookings**
 
 The audit consults the catalog as its baseline:
 
-- **Tax findings** look up `kind = tax` rows scoped to the booking's listing.
-- **Fee findings** look up `kind = fee`.
-- **Commission findings** look up `kind = commission`.
-- **CATALOG_EMPTY** is emitted if the catalog has zero confirmed/user-added rows for the relevant kind.
+- **Tax findings** check the booking's tax lines against the tax rows in the catalog scoped to that listing.
+- **Fee findings** check fees against the fee rows.
+- **Commission findings** check commission lines against the commission rows.
+- A **CATALOG_EMPTY** finding is emitted if the catalog has no confirmed rows of the relevant kind, so the audit short-circuits instead of running misleading checks.
 
-Each finding includes a `config_source` that points back to the specific catalog row driving the expectation, so you can edit the catalog row and re-run the audit to see if the finding clears.
+Each finding points back to the specific catalog row that drove the expectation, so you can edit the row and re-run the audit to see if the finding clears.
 
 ## Where on this page does each item live in OwnerRez?
 

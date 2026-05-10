@@ -68,10 +68,9 @@ A grid of finding types with counts. Click a type to filter the results table.
 
 ## How long does an audit take?
 
-Depends on the number of reservations and the PMS:
+It depends on how many reservations are in the window. As a rough guide, PX checks **about 80 reservations per minute**, so:
 
-- A 30-day audit for 50 listings: typically 30-90 seconds.
-- A 62-day audit for 500 listings: typically 5-10 minutes.
-- OwnerRez audits are slightly faster because PX has more cached data.
+- A small portfolio over a month: usually under a minute or two.
+- A large portfolio over the full 62-day window: a few minutes, sometimes up to ten on the busiest accounts.
 
-PX runs the audit in a background worker. The Audits page polls for status and displays an elapsed-time card while you wait. Feel free to navigate away - results stay tied to the audit ID.
+While the audit runs, leave the tab open - you can keep working elsewhere on your computer; just don't close the browser or navigate this tab to another PX page. An elapsed-time card shows progress, and your results appear on this same page when it finishes.

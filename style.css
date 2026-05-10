@@ -6,6 +6,14 @@
   --default-border-color: var(--gray-800);
 }
 
+/* Make the navbar logo bigger - default Mintlify nav-logo is h-4 (16px),
+   which renders our square PX icon as a tiny 16x16 thumbnail. */
+.nav-logo {
+  height: 56px !important;
+  max-height: 56px !important;
+  width: auto !important;
+}
+
 #sidebar .nav-dropdown-trigger {
   border: none !important;
   border-radius: 0 !important;

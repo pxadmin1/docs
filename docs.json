@@ -27,7 +27,7 @@
           "href": "/"
         },
         {
-          "anchor": "Dashboard",
+          "anchor": "PX App",
           "icon": "layout-dashboard",
           "href": "https://pxapp.net"
         },
@@ -137,7 +137,7 @@
     "links": [],
     "primary": {
       "type": "button",
-      "label": "Open dashboard",
+      "label": "Open PX App",
       "href": "https://pxapp.net"
     }
   }

@@ -44,61 +44,24 @@ PX validates the key and the **Integration Status** panel shows three lights: **
 
 ## What PX reads from Lodgify
 
-PX has read-only access. It never writes back to Lodgify.
+PX has **read-only** access. The Lodgify key technically carries write scope, but PX never uses it - nothing is written back.
 
-### Properties
+**Properties** - id, name, address, bedrooms / bathrooms / max guests, property type, currency, active flag, thumbnail.
+*Synced on connect, on `property` webhooks, and on Properties -> Sync from Lodgify.*
 
-- Property ID
-- Name
-- Full address (street, city, state, postal code, country)
-- Bedrooms, bathrooms, max guests
-- Property type
-- Currency
-- Active / inactive status
-- Thumbnail picture
+**Owners** - id, first / last name, email, phone. Read only when the property has a contact / owner record configured.
+*Synced with the parent property.*
 
-### Owners
+**Reservations** - id, property, status, check-in / check-out, booking date, guest details, guest count, channel and confirmation code, currency, totals.
+*Synced on demand, on `booking` webhooks, and during audits.*
 
-Lodgify exposes a contact / owner record per property when configured. When present PX reads:
+**Per-charge financial data** - line amount and type (accommodation / fee / tax / discount), taxable flag, per-night accommodation breakdown, per-reservation totals, payments.
+*Synced with the parent reservation; payments also via `payment` webhooks.*
 
-- Owner ID
-- First name, last name
-- Email address
-- Phone number
+**Tax catalog** - rates, names, applicability per property.
+*Synced on Tax Configuration -> Refresh from PMS.*
 
-### Reservations
-
-- Booking ID and property reference
-- Status (Booked, Tentative, Declined, Canceled)
-- Check-in and check-out dates
-- Booking date
-- Guest first name, last name, email, phone, country
-- Guest count
-- Channel / source (Airbnb, Vrbo, Booking.com, direct, etc.)
-- Confirmation code, external channel reservation number
-- Currency
-- Total amount, total paid, balance due, total refunded
-
-### Per-charge financial data
-
-- Per-line amount, type (accommodation, fee, tax, discount), description, taxable flag
-- Per-night accommodation breakdown
-- Per-reservation aggregates: subtotal, total taxes, channel fee, payout
-- Payment quotes and payment records: amount, date, method, status
-
-### Tax configuration
-
-PX reads tax settings directly from Lodgify: rates, names, applicability per property. Channel sync overrides apply on top inside PX.
-
-### Webhook events
-
-PX subscribes to Lodgify webhooks for:
-
-- Booking created, updated, canceled
-- Property created, updated
-- Payment received, refunded
-
-PX is read-only against Lodgify even though the API key technically carries write scope.
+**Webhook events** - booking created / updated / canceled, property created / updated, payment received / refunded.
 
 ## Removing the connection
 

@@ -28,7 +28,7 @@ Tax configuration in PX has three independent layers. Knowing which layer to tou
 Real-world tax setups need all three:
 
 1. **The rates and applicability** - the lodging tax is 9.5%, applies to accommodation only, applies to stays under 30 nights. This lives in your PMS.
-2. **Sync behavior per channel** - the same tax may sync to your direct channel but not to Booking.com because Booking.com cannot pass through the rate. Some PMSes (Guesty) do not expose this layer in their API, so PX provides a layer of overrides you maintain in PX itself.
+2. **Sync behavior per channel** - the same tax may sync to your direct channel but not to Booking.com because Booking.com cannot pass through the rate. Not every PMS exposes this layer in its API, so PX provides a channel override layer you maintain in PX itself.
 3. **Marketplace remittance** - Airbnb collects and remits some taxes on your behalf in many jurisdictions. Audits should not flag those taxes as missing on Airbnb bookings.
 
 PX combines all three to decide what to expect on a given booking.
@@ -45,28 +45,16 @@ For each reservation:
 
 A `config_source` value on each finding tells you which layer drove the expectation.
 
-## Differences by PMS
-
-### Guesty
-
-- The PMS mirror is **live**. Changes you make in Guesty appear in PX after clicking **Refresh from PMS**.
-- Channel sync is **inferred** - Guesty does not expose this in the API, so PX exposes the channel override layer for you to maintain in PX.
-- The **Airbnb tax remittance** wizard is available and applies to Airbnb bookings independently of channel overrides.
-
-### OwnerRez
-
-- The PMS mirror is **inferred** from booking history. The OwnerRez Catalog (under PMS Configuration) is the source of truth for taxes you enter and confirm.
-- Channel sync overrides apply on top of the catalog - same UI as Guesty.
-- The **Airbnb tax remittance** wizard is not yet available for OwnerRez. Marketplace-collected taxes are inferred directly from the OwnerRez booking data.
-
 ## Where to start
 
 If you are just connecting your PMS:
 
 1. Open **Tax Configuration**.
-2. Click **Refresh from PMS** (Guesty) or **Run detection** (OwnerRez).
+2. Refresh the PMS mirror so the latest rates are loaded.
 3. Confirm the taxes look right.
-4. If you are on Guesty, walk through the **Airbnb tax remittance wizard** at the top of the page. (OwnerRez accounts do not need this step - marketplace-collected taxes are inferred from the booking data itself.)
-5. Add channel sync overrides if you have channels that should not receive a particular tax.
+4. Walk through the **Airbnb tax remittance wizard** if it is shown for your PMS.
+5. Add channel sync overrides for any tax that should not flow to a given channel.
+
+The exact buttons, what gets refreshed, and whether the Airbnb remittance wizard appears all depend on which PMS is connected. See your PMS's **Connect** page for the specifics.
 
 You can run audits without doing any of this, but you will see a lot of `MISSING_TAX` and `UNEXPECTED_TAX` findings until tax configuration matches reality.

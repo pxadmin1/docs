@@ -30,26 +30,25 @@ OwnerRez redirects you back to PX. The **Integration Status** panel now shows gr
   ![OwnerRez connected](/images/screenshots/settings-ownerrez-connected.png)
 </Frame>
 
-## Step 2 - build the OwnerRez catalog
+## Step 2 - confirm the OwnerRez catalog
 
 This step is unique to OwnerRez. **You must do it before audits return useful results.**
 
-OwnerRez has no API to read your tax, surcharge, or commission setup. Instead, PX:
+OwnerRez has no API to read your tax, surcharge, or commission setup. Instead, the moment you authorize the connection PX:
 
 1. Scans your last 18 months of bookings.
 2. Infers a catalog of taxes, fees, and commission rates from the line items it sees.
-3. Asks you to confirm each entry.
+3. Loads them into your **OwnerRez Catalog** marked `inferred`, ready for review.
 
-To do this:
+You then:
 
 1. Open **PMS Configuration** in the sidebar.
-2. The **OwnerRez Catalog** loads with inferred entries marked `inferred`.
-3. Click **Detect from bookings** if you want PX to (re-)scan history.
-4. Walk through each row and:
+2. Walk through each row and:
    - Click **Confirm** if the inferred rate matches what you actually charge.
    - **Edit** the rate, unit (percent vs fixed), or applicability scope if needed.
    - Click **Add row** for any tax or fee PX did not pick up.
    - **Archive** entries that are out of date.
+3. Use **Detect from bookings** later if you want to rescan after a rate change or new booking history.
 
 Entries can be in one of four statuses:
 
@@ -58,7 +57,7 @@ Entries can be in one of four statuses:
 - **confirmed** - reviewed and approved. Used by audits.
 - **archived** - hidden, not used.
 
-Audits use **confirmed** and **user-added** rows only. If the catalog is empty, audits short-circuit with a `CATALOG_EMPTY` finding instead of running.
+Audits use **confirmed** and **user-added** rows only. If the catalog has no usable rows, audits short-circuit with a `CATALOG_EMPTY` finding instead of running.
 
 See [OwnerRez Catalog](/pms-configuration/ownerrez-catalog) for the full UI walkthrough.
 
@@ -68,75 +67,24 @@ See [OwnerRez Catalog](/pms-configuration/ownerrez-catalog) for the full UI walk
 
 ## What PX reads from OwnerRez
 
-PX has read-only access. It never writes back to OwnerRez.
+PX has **read-only** access. Nothing is written back.
 
-### Properties
+**Properties** - id, name, address, bedrooms / bathrooms / max guests, currency, owner id.
+*Synced on connect and on OwnerRez `property` webhooks.*
 
-- Property ID
-- Name
-- Full address (street1, street2, city, state, postal code, country)
-- Bedrooms, bathrooms, max guests
-- Currency
-- Owner ID (mapped to the Owner record below)
+**Owners** - id, first / last name, email, properties owned.
+*Synced with the parent property.*
 
-### Owners
+**Reservations (bookings)** - id, property, status, check-in / check-out, guest name and count, channel, confirmation code, currency, totals (amount, paid, balance, refunded, host fees), block flag, cancellation snapshot.
+*Synced on demand, on `booking` webhooks, and during audits.*
 
-- Owner ID
-- First name, last name (parsed from the full name when needed)
-- Email address
-- Properties owned (list of property IDs)
+**Per-charge financial data** - line amount and type (accommodation / surcharge / tax / expense), taxable flag, per-charge owner-vs-commission split. Plus payments, refunds, and deposits read separately so payouts can be reconciled to bookings.
+*Synced with the parent booking and on `payment` / `refund` / `deposit` webhooks.*
 
-### Reservations (bookings)
+**Tax / fee / commission catalog** - inferred from the last 18 months of bookings, then confirmed by you in **PMS Configuration -> OwnerRez Catalog**. OwnerRez's UI stays the system of record; PX's catalog is the audit baseline.
+*Built on **Detect from bookings**; not synced thereafter.*
 
-- Booking ID and property reference
-- Status (Active, Pending, Canceled, Quote - mapped to PX's confirmed / inquiry / canceled / pending)
-- Check-in and check-out dates
-- Guest ID, guest name (enriched from `/v2/guests/{id}` when available)
-- Guest count
-- Channel / listing site (Airbnb, Vrbo, Booking.com, direct, etc.)
-- Platform reservation number (the channel's confirmation, when present)
-- Confirmation code
-- Currency
-- Total amount, total paid, balance due, total refunded, total host fees
-- Booked date, created and updated timestamps
-- Owner ID
-- Block flag (true for blocked dates rather than guest stays)
-- Canceled date, cancellation policy snapshot
-
-### Per-charge financial data
-
-For each charge on a booking:
-
-- Amount, type (accommodation / surcharge / tax / expense), description
-- Per-charge owner-vs-commission split: owner amount, commission amount, commission percent
-- Taxable flag
-- Source flags: inherited from account vs. property-overridden, channel-managed flag, raw position
-
-For each payment, refund, and deposit (read separately):
-
-- **Payments** - payment ID, booking, amount, collected date, type, deposited flag, total fees.
-- **Refunds** - refund ID, booking, amount, paid date, deposited flag, linked payment ID.
-- **Deposits** (payouts from the processor) - deposit ID, deposit date, processor, status, external deposit number, totals, individual transactions, fees, and adjustments.
-
-### Tax configuration
-
-OwnerRez's API does not expose your tax catalog, so PX:
-
-1. Scans the last 18 months of bookings.
-2. Infers a catalog of taxes, fees, and commissions from the line items it sees.
-3. Asks you to confirm each entry.
-
-You manage this on the **PMS Configuration** page under **OwnerRez Catalog**. The OwnerRez UI itself remains the system of record - PX's catalog is your audit baseline.
-
-### Webhook events
-
-PX subscribes to OwnerRez webhooks:
-
-- `entity_create` / `entity_update` on **booking** - re-ingests charges, payments, refunds, and deposits for that booking.
-- `entity_create` / `entity_update` on **property** - re-fetches the property.
-- `entity_create` / `entity_update` on **payment**, **refund**, or **deposit** - re-ingests financials for the linked booking.
-- `entity_delete` on booking, property, guest, or inquiry - removes the record from PX.
-- `application_authorization_revoked` - tears down the OAuth credentials cleanly.
+**Webhook events** - `entity_create` / `entity_update` / `entity_delete` on bookings, properties, payments, refunds, and deposits, plus `application_authorization_revoked` (cleanly tears down the OAuth credentials).
 
 ## Removing the connection
 

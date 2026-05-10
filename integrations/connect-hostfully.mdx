@@ -40,63 +40,24 @@ PX validates the key and the **Integration Status** panel shows three lights: **
 
 ## What PX reads from Hostfully
 
-PX has read-only access. It never writes back to Hostfully.
+PX has **read-only** access. Nothing is written back.
 
-### Properties
+**Properties** - uid, name, address (with lat / lng), bedrooms / bathrooms / accommodates, property type, currency, active flag, thumbnail.
+*Synced on connect, on `property` webhooks, and on Properties -> Sync from Hostfully.*
 
-- Property ID (UID)
-- Name
-- Full address (street, city, state, zip, country, latitude / longitude)
-- Bedrooms, bathrooms, accommodates
-- Property type
-- Currency
-- Active flag
-- Thumbnail picture
+**Owners** - id, first / last name, email, phone, properties managed. Read only when the agency exposes owner records.
+*Synced with the parent property.*
 
-### Owners
+**Reservations** - uid, property, status, check-in / check-out, booking date, guest details, guest count breakdown, channel and confirmation code, currency, totals, cancellation snapshot.
+*Synced on demand, on `reservation` webhooks, and during audits.*
 
-When the agency exposes owner records, PX reads:
+**Per-charge financial data** - line amount and type (accommodation / cleaning / fee / tax / expense), taxable flag, per-night accommodation breakdown, per-reservation totals (subtotal, taxes, channel commission, owner payout), payments and refunds.
+*Synced with the parent reservation; payments / refunds also via `payment` webhooks.*
 
-- Owner ID
-- First name, last name
-- Email address
-- Phone number (when present)
-- Properties managed for this owner
+**Tax catalog** - agency-level rates, names, applicability per property.
+*Synced on Tax Configuration -> Refresh from PMS.*
 
-### Reservations
-
-- Reservation UID and property reference
-- Status (Confirmed, Pending, Canceled, Inquiry, Blocked)
-- Check-in and check-out dates
-- Booking date
-- Guest first name, last name, email, phone
-- Guest count, adults, children
-- Channel / source (Airbnb, Vrbo, Booking.com, direct, etc.)
-- Confirmation code
-- Currency
-- Total amount, total paid, balance due, total refunded
-- Cancellation date and policy
-
-### Per-charge financial data
-
-- Per-charge amount, type (accommodation, cleaning, fee, tax, expense), description, taxable flag
-- Per-night accommodation breakdown
-- Per-reservation aggregates: subtotal, total taxes, channel commission, owner payout
-- Payment records: amount, date, method
-- Refund records: amount, date, linked payment
-
-### Tax configuration
-
-PX reads agency-level taxes from Hostfully: rates, names, applicability per property. Channel sync overrides apply on top inside PX.
-
-### Webhook events
-
-PX subscribes to Hostfully webhooks for:
-
-- Lead / quote created
-- Reservation created, updated, canceled
-- Property created, updated
-- Payment created, refunded
+**Webhook events** - lead / quote created, reservation created / updated / canceled, property created / updated, payment created / refunded.
 
 ## Removing the connection
 

@@ -43,57 +43,25 @@ PX validates the token and the **Integration Status** panel shows three lights: 
 
 ## What PX reads from Hospitable
 
-PX has read-only access. It never writes back to Hospitable.
+PX has **read-only** access. Nothing is written back.
 
-### Properties
+**Properties** - id, name, address, bedrooms / bathrooms / max guests, property type, currency, active flag, thumbnail.
+*Synced on connect, on listing webhooks, and on Properties -> Sync from Hospitable.*
 
-- Listing ID
-- Name (internal nickname or public title)
-- Full address (street, city, state, postal code, country)
-- Bedrooms, bathrooms, max guests
-- Property type
-- Currency
-- Active / inactive status
-- Thumbnail picture
+**Reservations** - id, listing, status, check-in / check-out, booking date, guest details (subject to channel masking), guest count breakdown, channel and confirmation codes, currency, totals.
+*Synced on demand, on reservation webhooks, and during audits.*
 
-### Owners
+**Per-charge financial data** - per-night accommodation, cleaning / pet / extra-guest / custom fees, taxes per type, channel commission and host service fee, guest-paid vs. host-payout split.
+*Synced with the parent reservation.*
 
-Hospitable does not expose owner records as a dedicated entity. Owner mapping is managed directly in PX.
+**Tax catalog** - rates, names, applicability per listing.
+*Synced on Tax Configuration -> Refresh from PMS.*
 
-### Reservations
+**Owners** - not exposed by Hospitable's API. Managed directly in PX.
 
-- Reservation ID and listing reference
-- Status (Accepted, Pending, Canceled, Checkpoint)
-- Check-in and check-out dates
-- Booking date
-- Guest first name, last name, email, phone (subject to channel masking)
-- Guest count, adults, children, infants
-- Channel / source (Airbnb, Vrbo, Booking.com, direct)
-- Channel reservation number / confirmation code
-- Currency
-- Total amount, total paid, balance due, total refunded
+**Webhook events** - reservation created / updated / canceled, listing created / updated, channel connection changes.
 
-### Per-charge financial data
-
-- Per-night pricing breakdown (base rate per night)
-- Cleaning fee, pet fee, extra-guest fee, custom fees
-- Taxes (per type, per amount)
-- Channel commission and host service fee
-- Guest-paid total vs. host payout breakdown
-
-### Tax configuration
-
-PX reads tax settings directly from Hospitable: rates, names, applicability per listing. Channel sync overrides apply on top inside PX.
-
-### Webhook events
-
-PX subscribes to Hospitable webhooks for:
-
-- Reservation created, updated, canceled
-- Listing created, updated
-- Channel connection changes
-
-Hospitable exposes per-night pricing (not just the stay average) and labeled line items, so audits can verify accommodation amounts to the day.
+Hospitable exposes per-night pricing (not just the stay average), so audits can verify accommodation amounts to the day.
 
 ## Removing the connection
 

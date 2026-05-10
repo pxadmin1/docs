@@ -7,12 +7,13 @@ PX syncs in three modes: **on connect**, **on demand**, and **via webhooks**.
 
 ## On connect
 
-When you first connect a PMS, PX fetches:
+The first sync runs automatically as soon as PX validates your credentials. PX fetches:
 
-- Account metadata (the OAuth account ID, admin user).
-- A starter catalog (Guesty: live config; OwnerRez: nothing yet - inferred later).
+- Account metadata - the OAuth account ID and the admin user.
+- Your full property catalog.
+- A tax / fee / commission catalog (the way it is built depends on the PMS - see the relevant **Connect** page).
 
-No reservations, no bookings, no journal entries. Properties also do not auto-sync - you trigger that explicitly the first time.
+Reservations and per-booking financial data are pulled on demand and via webhooks from then on - they are not bulk-loaded at connect time.
 
 ## On user action
 
@@ -27,7 +28,6 @@ These actions hit your PMS in real time:
 | Tax Configuration -> **Refresh from PMS** | Account-level and per-listing taxes (Guesty). |
 | PMS Configuration -> **Refresh from PMS** | Fees, taxes, commissions catalog (Guesty). |
 | PMS Configuration -> **Detect from bookings** | Catalog inference from history (OwnerRez). |
-| Reports -> **Generate Report** | Reservations in the requested check-in range, with full financial breakdown. |
 | Audits -> **Generate Audit** | Reservations in the audit range plus their dependencies. |
 
 Each "on demand" call is rate-limit aware. If your PMS rejects with a 429, PX surfaces a banner with a countdown and the action's button stays disabled until the cooldown ends.

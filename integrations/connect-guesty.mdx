@@ -67,8 +67,6 @@ PX has **read-only** access. Nothing is written back.
 **Tax catalog** - account-level and per-listing taxes: rates, applicability, metadata.
 *Synced on Tax Configuration -> Refresh from PMS.*
 
-**Owners** - not exposed by Guesty's API. Managed directly in PX.
-
 **Webhook events** - `listing.new` / `updated` / `removed`, `reservation.new` / `updated`, and `payments.*` (acknowledged - financial state is re-read from the reservation, not the webhook payload, so a missed event never causes drift).
 
 ## Removing the connection

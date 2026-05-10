@@ -28,7 +28,7 @@ Tax configuration in PX has three independent layers. Knowing which layer to tou
 Real-world tax setups need all three:
 
 1. **The rates and applicability** - the lodging tax is 9.5%, applies to accommodation only, applies to stays under 30 nights. This lives in your PMS.
-2. **Sync behavior per channel** - the same tax may sync to your direct channel but not to Booking.com because Booking.com cannot pass through the rate. Not every PMS exposes this layer in its API, so PX provides a channel override layer you maintain in PX itself.
+2. **Sync behavior per channel** - the same tax may sync to your direct channel but not to Booking.com because Booking.com cannot pass through the rate. PX provides a channel override layer you maintain inside PX so audits know what to expect on each booking.
 3. **Marketplace remittance** - Airbnb collects and remits some taxes on your behalf in many jurisdictions. Audits should not flag those taxes as missing on Airbnb bookings.
 
 PX combines all three to decide what to expect on a given booking.

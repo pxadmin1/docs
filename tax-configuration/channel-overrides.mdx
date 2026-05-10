@@ -11,7 +11,7 @@ Channel sync overrides are PX's user-writable layer for "is this tax expected to
 
 ## Why they exist
 
-Some PMSes (Guesty included) do not expose the per-channel sync setting through their API. Even when the PMS does expose it (OwnerRez via inferred catalog), that information may be incomplete. So PX provides a writable layer where you state your reality:
+PX cannot always tell from PMS data alone which channels actually carry which taxes. Channel sync overrides are a writable layer where you state your reality:
 
 > "Lodging tax syncs to direct and Vrbo bookings, but not to Airbnb (because Airbnb collects it) and not to Booking.com (because Booking.com cannot pass through this rate)."
 

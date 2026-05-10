@@ -41,7 +41,7 @@ Tax configuration in PX has three independent layers:
 2. **Channel sync overrides (PX-only, user-writable).** Per-tax, per-channel toggles you set inside PX. They are used during audits to decide whether to expect a tax on a given booking. PX does **not** push these back to your PMS.
 3. **Airbnb tax remittance (PX-only, user-writable).** A four-step wizard you complete inside PX that records which taxes Airbnb collects and remits on your behalf. Findings for those taxes are suppressed on Airbnb bookings. Again, this is stored in PX only and is not pushed to your PMS.
 
-Some PMSes do not expose a tax read API. In those cases, the PMS catalog (under PMS Configuration) is the source of truth - taxes are inferred from your booking history and you confirm or edit them inside PX.
+For some PMSes the tax mirror is built from your booking history rather than read directly from the PMS. The PMS catalog (under PMS Configuration) is the source of truth in that case - taxes are inferred for you and you confirm or edit them inside PX.
 
 ## Audit
 
@@ -87,7 +87,7 @@ Properties + Reservations + Charges + Payments
 Audit (against business model + tax config + PMS catalog)
     |
     v
-Findings -> Property detail / Audit page / Reports
+Findings -> Property detail / Audit page
 ```
 
 PX is **not a ledger or bookkeeping engine**. It does not maintain accounts, post journal entries, or replace your accounting system. PX *reads* your PMS data and *audits* it against your business model and tax configuration. Where your PMS exposes journal entries, PX uses them directly. Where it does not, PX works from per-charge data (charges, payments, refunds, deposits) to compute what the postings should look like for audit purposes only. The audit logic is the same either way; only the data source differs.
@@ -104,5 +104,4 @@ PX is **not a ledger or bookkeeping engine**. It does not maintain accounts, pos
 | OwnerRez catalog | **PMS Configuration** | Tax/fee/commission baseline. |
 | Audit | **Audits** | Run, results, PDF export. |
 | Findings | Property detail (per property) or Audits (across all) | |
-| Reports | **Reports** | Reservation-level financial report. |
 | Settings | **Settings** | PMS, timezone, billing, danger zone. |

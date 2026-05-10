@@ -36,7 +36,7 @@ The first time you connect, PX pulls:
 - **Properties** - one record per listing, including name, address, thumbnail, capacity, and active/inactive flag.
 - **Owners** (when present in the PMS) - mapped to properties so you can see the owner inline on each property.
 
-Reservations and financial data are fetched **on demand** when you open a property's Reservations tab, generate a report, or run an audit. PX caches selectively to keep audits fast and stay under PMS rate limits.
+Reservations and financial data are fetched **on demand** when you open a property's Reservations tab or run an audit. PX caches selectively to keep audits fast and stay under PMS rate limits.
 
 ## Webhooks
 
@@ -52,4 +52,4 @@ PX supports one active PMS per account. Switching providers requires deleting th
 
 ## Rate limits
 
-PX respects PMS rate limits. If you hit one (most common when generating large financial reports), the UI shows a 429 banner with a countdown - the affected button stays disabled until the cooldown finishes.
+PX respects PMS rate limits. If you hit one (most common when running large audits), the UI shows a 429 banner with a countdown - the affected button stays disabled until the cooldown finishes.

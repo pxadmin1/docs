@@ -24,7 +24,6 @@ When you confirm:
 - **OwnerRez catalog** - all rows.
 - **Audit history** - every audit you have run.
 - **Issue history** - findings, fix actions, dismissals.
-- **Reports** - generated reports.
 - **Billing record** - the Stripe customer record is deleted; saved payment methods are detached.
 - **Authentication** - your Clerk identity is removed; you are logged out and cannot log back in to this account.
 
@@ -48,7 +47,7 @@ None of these contain personally identifiable information beyond what tax law re
 
 Consider:
 
-- **Export anything you want to keep.** Audit PDFs, CSV exports of reports - download them first. Once the account is deleted, they are gone.
+- **Export anything you want to keep.** Audit PDFs - download them first. Once the account is deleted, they are gone.
 - **Cancel billing first** - or it can be done as part of deletion, but doing it explicitly via Stripe ensures no last-minute charges.
 - **Check for in-flight audits** - cancel any running audits before deleting; otherwise the worker may emit errors.
 - **Inform team members** - if multiple people use the account, deletion affects them all.

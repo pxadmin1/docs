@@ -34,7 +34,7 @@ OwnerRez redirects you back to PX. The **Integration Status** panel now shows gr
 
 This step is unique to OwnerRez. **You must do it before audits return useful results.**
 
-OwnerRez has no API to read your tax, surcharge, or commission setup. Instead, the moment you authorize the connection PX:
+The moment you authorize the connection, PX:
 
 1. Scans your last 18 months of bookings.
 2. Infers a catalog of taxes, fees, and commission rates from the line items it sees.
@@ -75,7 +75,7 @@ PX has **read-only** access. Nothing is written back.
 **Owners** - id, first / last name, email, properties owned.
 *Synced with the parent property.*
 
-**Reservations (bookings)** - id, property, status, check-in / check-out, guest name and count, channel, confirmation code, currency, totals (amount, paid, balance, refunded, host fees), block flag, cancellation snapshot.
+**Reservations (bookings)** - id, property, status, check-in / check-out, guest name and count, channel and the channel's reservation number, currency, totals (amount, paid, balance, refunded, host fees), block flag, cancellation snapshot.
 *Synced on demand, on `booking` webhooks, and during audits.*
 
 **Per-charge financial data** - line amount and type (accommodation / surcharge / tax / expense), taxable flag, per-charge owner-vs-commission split. Plus payments, refunds, and deposits read separately so payouts can be reconciled to bookings.

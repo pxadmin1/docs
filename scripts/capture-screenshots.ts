@@ -44,27 +44,22 @@ async function ensureSignedIn(context: BrowserContext): Promise<Page> {
   const dashboardMarker = page.getByRole("link", { name: /properties/i }).first();
   try {
     await dashboardMarker.waitFor({ timeout: 5_000 });
+    console.log("  Already signed in - continuing.");
     return page;
   } catch {
-    // Not signed in. Pause so the user can log in manually.
     console.log(
-      "\n  Sign in in the opened window, then return here and press ENTER to continue.\n",
+      "\n  Sign in to PX in the browser window that just opened.",
+      "\n  The script will resume automatically once it sees the dashboard.",
+      "\n  (Waiting up to 5 minutes...)\n",
     );
-    await waitForEnter();
-    await dashboardMarker.waitFor({ timeout: 60_000 });
+    await dashboardMarker.waitFor({ timeout: 5 * 60 * 1000 });
+    console.log("  Sign-in detected.");
     if (STORAGE_STATE) {
       await context.storageState({ path: STORAGE_STATE });
       console.log(`  Saved storage state to ${STORAGE_STATE}`);
     }
     return page;
   }
-}
-
-function waitForEnter(): Promise<void> {
-  return new Promise((resolve) => {
-    process.stdin.once("data", () => resolve());
-    process.stdin.resume();
-  });
 }
 
 async function shoot(page: Page, name: string): Promise<void> {

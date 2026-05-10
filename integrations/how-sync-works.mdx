@@ -1,6 +1,6 @@
 ---
 title: "How sync works"
-description: "When PX pulls data from your PMS, what gets cached, and how to refresh."
+description: "When PX pulls data from your PMS and how to refresh."
 ---
 
 PX syncs in three modes: **on connect**, **on demand**, and **via webhooks**.
@@ -41,21 +41,7 @@ PX subscribes to PMS webhooks so changes propagate without you clicking sync:
 
 Webhook health is shown on the **Integration Status** panel under **Settings**. A red light means PX did not register or failed verification - click **Refresh** there to retry.
 
-## What gets cached
-
-PX caches selectively to keep audits fast and to stay under PMS rate limits:
-
-| Data | Cache behavior |
-|---|---|
-| Properties | Cached. Refreshed on each Properties sync. |
-| Reservations | Not cached. Re-fetched on demand. |
-| Guesty journal entries | Cached for **30 days**, then auto-purged. |
-| OwnerRez payments | Cached permanently (updated by webhook). |
-| OwnerRez refunds | Cached permanently (updated by webhook). |
-| OwnerRez deposits | Cached permanently (updated by webhook). |
-| OwnerRez catalog (your audit baseline) | Cached permanently, status-tracked. |
-
-If you ever suspect cached data is stale, click **Refresh** on the relevant page. Most pages have a refresh button at the top.
+If you ever suspect data is stale, click **Refresh** on the relevant page. Most pages have a refresh button at the top.
 
 ## Manual properties
 

@@ -114,7 +114,8 @@
           "audit/run-an-audit",
           "audit/understanding-findings",
           "audit/check-categories",
-          "audit/export-pdf"
+          "audit/export-pdf",
+          "audit/month-end-close"
         ]
       },
       {

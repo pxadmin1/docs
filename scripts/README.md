@@ -23,6 +23,8 @@ npx ts-node scripts/capture-screenshots.ts all
 # Just one
 npx ts-node scripts/capture-screenshots.ts ownerrez-auth
 npx ts-node scripts/capture-screenshots.ts bm-wizard
+npx ts-node scripts/capture-screenshots.ts property-detail
+npx ts-node scripts/capture-screenshots.ts settings
 ```
 
 The script writes captures into `images/screenshots/` next to the existing
@@ -41,6 +43,17 @@ immediately.
 
 ### Notes
 
+- **Masking is automatic.** Every capture hides the `Admin Panel` and
+  `AI Training` sidebar entries and the sidebar footer (your name and email),
+  and blurs the **Guesty Account ID** plus the Guesty **account name** rendered
+  beneath it. Both Guesty values are live data and must never ship in a public
+  screenshot. If you capture a new screen that surfaces another account
+  identifier, extend `maskAccountIdentifiers()` rather than editing the PNG.
+- **Settings flow** writes three files: `settings-overview.png` (full page),
+  `settings-guesty-connected.png`, and `settings-integration-status.png` (both
+  cropped to their card). The PMS card selector matches whichever state the
+  account is in - `Guesty API Credentials`, `OwnerRez Connected`, or
+  `Connect Your PMS`.
 - **OwnerRez OAuth flow** is captured against the real OwnerRez consent
   screen. The script closes the tab without clicking Allow, so it is safe to
   run on a connected account.

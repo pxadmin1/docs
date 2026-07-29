@@ -55,8 +55,8 @@ You can also create properties manually from the Properties page (**Add Manually
 
 PX supports one active PMS per account. Switching requires:
 
-1. **Settings** -> **PMS Connection** -> **Delete** the existing credentials.
+1. **Settings** -> remove the existing connection (**Delete** for Guesty, **Disconnect** for OwnerRez).
 2. Connect the new provider.
 3. **Properties** -> **Sync from \[new PMS]**.
 
-Historical data tied to the old PMS stays in place. You may see properties from both providers in your list until you remove the old ones manually.
+Removing a connection also removes the properties synced from it, so you will not see two providers' properties side by side. Your account-level configuration - business models, tax configuration, and audit history - stays in place, and step 3 repopulates the property list from the new PMS.

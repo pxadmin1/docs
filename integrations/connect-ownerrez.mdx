@@ -5,7 +5,7 @@ description: "Authorize PX Accounting with OwnerRez and build your audit baselin
 
 OwnerRez uses a one-click OAuth flow. There is nothing to copy and paste - you click a button in PX, sign in to OwnerRez, and grant access.
 
-<Frame caption="Selecting OwnerRez on the PMS Connection card">
+<Frame caption="Selecting OwnerRez on the Connect Your PMS card">
   ![OwnerRez in the PMS picker](/images/screenshots/pms-picker-ownerrez.png)
 </Frame>
 
@@ -19,7 +19,7 @@ You will need:
 ## Step 1 - authorize PX
 
 1. In PX, open **Settings**.
-2. In the **PMS Connection** card, pick **OwnerRez**.
+2. In the **Connect Your PMS** card, pick **OwnerRez**.
 3. Click **Connect with OwnerRez**.
 4. Sign in to OwnerRez when prompted.
 5. On the consent screen, click **Authorize PX**.
@@ -28,7 +28,7 @@ You will need:
   ![Authorize PX on OwnerRez](/images/screenshots/ownerrez-oauth-authorize.png)
 </Frame>
 
-OwnerRez redirects you back to PX. The **Integration Status** panel now shows green lights for **Admin**, **OAuth**, and **Webhook**.
+OwnerRez redirects you back to PX. The card becomes **OwnerRez Connected**, subtitled *Your OwnerRez account is connected via OAuth*, and the **Integration Status** panel below shows a **Webhooks** row reading *Registered and active*.
 
 <Frame caption="OwnerRez connected">
   ![OwnerRez connected](/images/screenshots/settings-ownerrez-connected.png)
@@ -92,7 +92,7 @@ PX has **read-only** access. Nothing is written back.
 
 ## Removing the connection
 
-Open **Settings**, scroll to the **PMS Connection** card, and click **Delete**. This revokes the OAuth token, unregisters webhooks, and leaves your existing PX data in place.
+Open **Settings**, go to the **OwnerRez Connected** card, and click **Disconnect**. Confirm in the dialog. This revokes the OAuth token, unregisters webhooks, and **removes your synced properties**. Your business models, tax configuration, and audit history are account-level and stay in place, and you can reconnect at any time.
 
 ## Troubleshooting
 

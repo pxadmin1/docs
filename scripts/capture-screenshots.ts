@@ -1,9 +1,11 @@
 /**
  * Capture screenshots for the docs site.
  *
- * Two flows:
+ * Flows:
  *   1. ownerrez-auth   -> OwnerRez OAuth consent screen
  *   2. bm-wizard       -> each step of the Create Business Model wizard
+ *   3. property-detail -> the Properties list and a property detail page
+ *   4. settings        -> Settings page, plus the PMS and Integration Status cards
  *
  * Usage (from /Users/marwan/GitHub/repos/docs):
  *   npm install --save-dev playwright @types/node typescript ts-node
@@ -66,6 +68,7 @@ async function ensureSignedIn(context: BrowserContext): Promise<Page> {
 //   - "AI Training" sidebar entry (feature-flagged, not for public docs).
 //   - "Admin Panel" sidebar entry (only visible to admin users).
 //   - Sidebar footer (the user-name / email block at the bottom).
+//   - Account-identifying Guesty values (see maskAccountIdentifiers).
 async function applyDocCss(page: Page): Promise<void> {
   await page.addStyleTag({
     content: `
@@ -91,10 +94,65 @@ async function applyDocCss(page: Page): Promise<void> {
   });
 }
 
-async function shoot(page: Page, name: string): Promise<void> {
+// Blur the Guesty values that identify a real account. Both are live data, so
+// neither can ship in a public screenshot:
+//   - Guesty Account ID  - the read-only 24-char id on a Marketplace connection.
+//   - Guesty account name - rendered as the "<name>. Quote this ID ..." prefix
+//     under that field.
+// Blurring the glyphs via transparent text + text-shadow keeps the input border
+// and layout crisp, so the screenshot still reads as a real form.
+async function maskAccountIdentifiers(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const BLUR = (el: HTMLElement) => {
+      el.style.setProperty("color", "transparent", "important");
+      el.style.setProperty("text-shadow", "0 0 9px rgba(20,20,20,0.75)", "important");
+      el.style.setProperty("caret-color", "transparent", "important");
+    };
+
+    document.querySelectorAll("input").forEach((input) => {
+      if (/^[0-9a-f]{20,}$/i.test((input as HTMLInputElement).value.trim())) {
+        BLUR(input as HTMLElement);
+      }
+    });
+
+    const MARKER = ". Quote this ID";
+    document.querySelectorAll("p").forEach((p) => {
+      const full = (p.textContent || "").trim();
+      const idx = full.indexOf(MARKER);
+      if (idx <= 0) return;
+      const name = document.createElement("span");
+      name.textContent = full.slice(0, idx);
+      BLUR(name);
+      p.textContent = "";
+      p.appendChild(name);
+      p.appendChild(document.createTextNode(full.slice(idx)));
+    });
+  });
+}
+
+async function shoot(page: Page, name: string, fullPage = false): Promise<void> {
   await applyDocCss(page);
+  await maskAccountIdentifiers(page);
   const out = path.join(SCREENSHOT_DIR, name);
-  await page.screenshot({ path: out, fullPage: false });
+  await page.screenshot({ path: out, fullPage });
+  console.log(`  saved ${name}`);
+}
+
+// Capture a single card rather than the viewport, so the cropped card images
+// (settings-guesty-connected.png, settings-integration-status.png) stay tight
+// when the page above them grows.
+async function shootCard(page: Page, heading: RegExp, name: string): Promise<void> {
+  await applyDocCss(page);
+  await maskAccountIdentifiers(page);
+  const card = page
+    .locator("div")
+    .filter({ has: page.getByText(heading) })
+    .last();
+  const out = path.join(SCREENSHOT_DIR, name);
+  await card.screenshot({ path: out }).catch(async () => {
+    console.warn(`  could not isolate card for ${name}; falling back to viewport`);
+    await page.screenshot({ path: out, fullPage: false });
+  });
   console.log(`  saved ${name}`);
 }
 
@@ -294,6 +352,26 @@ async function capturePropertyDetail(page: Page): Promise<void> {
   console.log("  Captured property detail.");
 }
 
+// --- Flow 4: Settings page --------------------------------------------------
+
+async function captureSettings(page: Page): Promise<void> {
+  console.log("Capturing the Settings page...");
+
+  await page.goto(`${BASE_URL}/settings`, { waitUntil: "networkidle" });
+  await page
+    .getByRole("heading", { name: /^settings$/i })
+    .first()
+    .waitFor({ timeout: 30_000 })
+    .catch(() => {});
+  await page.waitForTimeout(1200);
+
+  await shoot(page, "settings-overview.png", true);
+  console.log("  Captured the full Settings page.");
+
+  await shootCard(page, /Guesty API Credentials|OwnerRez Connected|Connect Your PMS/, "settings-guesty-connected.png");
+  await shootCard(page, /Integration Status/, "settings-integration-status.png");
+}
+
 // --- Entry point ------------------------------------------------------------
 
 async function main(): Promise<void> {
@@ -328,9 +406,12 @@ async function main(): Promise<void> {
     if (flow === "property-detail" || flow === "all") {
       await capturePropertyDetail(page);
     }
-    if (!["ownerrez-auth", "bm-wizard", "property-detail", "all"].includes(flow)) {
+    if (flow === "settings" || flow === "all") {
+      await captureSettings(page);
+    }
+    if (!["ownerrez-auth", "bm-wizard", "property-detail", "settings", "all"].includes(flow)) {
       console.error(
-        `Unknown flow: ${flow}. Use ownerrez-auth | bm-wizard | property-detail | all.`,
+        `Unknown flow: ${flow}. Use ownerrez-auth | bm-wizard | property-detail | settings | all.`,
       );
       process.exit(1);
     }

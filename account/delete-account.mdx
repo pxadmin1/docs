@@ -15,7 +15,7 @@ Clicking the button opens a confirmation dialog with a 2FA-style verification st
 
 When you confirm:
 
-- **PMS credentials** - encrypted Client ID, Client Secret, and OAuth tokens are removed.
+- **PMS credentials** - encrypted credentials and OAuth tokens are removed, whichever connection type you used.
 - **Webhook subscriptions** - PX unregisters its webhook endpoints with your PMS.
 - **Properties** - synced and manual properties.
 - **Reservations cache** - any cached reservation data.
@@ -57,9 +57,9 @@ Consider:
 If you are unsure, disconnect the PMS instead of deleting the account:
 
 - Open **Settings**.
-- In **PMS Connection**, click **Delete**.
+- In the PMS card, click **Delete** (Guesty) or **Disconnect** (OwnerRez).
 
-This removes credentials and webhooks but preserves your business models, audit history, and other PX-side configuration. You can reconnect anytime.
+This removes your credentials, webhooks, and synced properties, but preserves your business models, audit history, and other account-level configuration. You can reconnect anytime.
 
 This is the right choice if:
 

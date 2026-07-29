@@ -1,74 +1,108 @@
 ---
 title: "Account settings"
-description: "PMS connection, integration status, account preferences, and danger zone."
+description: "Guesty credentials, integration status, account preferences, billing, and danger zone."
 ---
 
-The **Settings** page is the home for everything that affects your account globally - connecting a PMS, watching integration health, setting your timezone, managing billing, and (when needed) deleting the account.
+The **Settings** page is the home for everything that affects your account globally - your PMS connection, integration health, your timezone, billing, and (when needed) deleting the account.
 
-<Frame caption="Settings page">
+<Frame caption="The Settings page with a Guesty Marketplace connection">
   ![Settings page](/images/screenshots/settings-overview.png)
 </Frame>
 
 The page is organized into cards:
 
-1. **PMS Connection**
+1. **Guesty API Credentials**
 2. **Integration Status**
 3. **Account Preferences**
-4. **Billing & Subscription**
+4. **Billing & Payment**
 5. **Danger Zone**
 
-## PMS Connection
+## Guesty API Credentials
 
-Connect, swap, or disconnect a PMS. Pick a provider:
+This card shows how your Guesty account is connected and lets you remove the connection. A **Connected via Guesty Marketplace** badge sits next to the card title, and the subtitle reads *Your Guesty account is connected and syncing properties*.
 
-- **Guesty** - paste a Client ID and Client Secret. See [Connect Guesty](/integrations/connect-guesty).
-- **OwnerRez** - click **Connect with OwnerRez** to start OAuth. See [Connect OwnerRez](/integrations/connect-ownerrez).
+Guesty issued the credentials when you connected, so there is nothing to paste or edit here. See [Connect Guesty](/integrations/connect-guesty) for how the connection is made.
 
-Once connected, the card shows the active provider and offers a **Delete** button to remove the credentials.
+<Note>
+  This card is provider-specific. On an OwnerRez account it reads **OwnerRez Connected** instead, with the subtitle *Your OwnerRez account is connected via OAuth* (or *via Personal Access Token*) and a **Disconnect** button. Before any PMS is connected, the card is **Connect Your PMS** and shows the provider picker.
+</Note>
 
-You can only have **one** active PMS at a time. Switching providers requires deleting the existing credentials first.
+<Frame caption="Guesty API Credentials card, connected via the Guesty Marketplace">
+  ![Guesty connected](/images/screenshots/settings-guesty-connected.png)
+</Frame>
+
+### What the card shows
+
+- **Guesty Account ID** - a read-only identifier for your Guesty account. Quote this ID when you contact Guesty support. Your Guesty account name appears just below the field.
+- **Connected** - the date the connection was last established.
+
+<Note>
+  If the Account ID field is empty and reads *Not read from Guesty yet. It appears after the next sync*, the connection predates this field. It fills in automatically after the next daily sync.
+</Note>
+
+To reconnect, disconnect PX Accounting on its [partner page in Guesty](https://app.guesty.com/integrations/partners/pxaccounting) and connect again. The connection is not editable from inside PX: Guesty issues the credentials in exchange for a one-time key and does not make them retrievable afterwards, so there is nothing here to change.
+
+### Deleting the connection
+
+Click **Delete** to remove the connection. PX asks you to confirm, then:
+
+- Removes the stored credentials.
+- Unregisters the webhook.
+- **Removes all synced properties.**
+
+<Warning>
+  Deleting Guesty credentials also deletes your synced properties. This cannot be undone.
+</Warning>
+
+You can only have **one** active PMS at a time. Switching providers means deleting the existing connection first.
 
 ## Integration Status
 
-Three lights, one for each subsystem:
+This card reports the health of your PMS integration and lets you retry anything that failed. It shows up to two rows, depending on your provider and connection state.
 
-- **Admin** - PX can authenticate against the PMS admin API.
-- **OAuth** - the access token is valid and stored encrypted.
-- **Webhook** - PX successfully registered its webhook endpoint with your PMS.
+**Admin Account** (Guesty only, and only when PX manages one) - reads *Created: `<email>`* with a green check, or *Not created yet* with a red X and a **Retry** button.
 
-Each light is green when healthy and red with an error message when not. A **Refresh** button at the top of the panel re-runs the checks.
+**Webhooks** - always shown. The summary line tells you exactly where you stand:
 
-Common red-light causes:
+| Summary | Meaning | Retry available |
+| --- | --- | --- |
+| *Registered and active* | Healthy. Changes in your PMS reach PX as they happen. | - |
+| *Registered to an old address - re-register to fix* | The webhook points at a stale URL. | Yes |
+| *Partially registered (n/m)* | Only some webhook events registered. | Yes |
+| *Not registered* | No webhook is registered. | Yes |
+| *Not configured on server* | Marked N/A. Nothing to do on your side. | No |
+| *Not available (requires OAuth)* | Marked N/A. Your connection type does not support webhooks. | No |
+| *Status unknown* | PX could not determine the state. The error follows the label. | Yes |
 
-- **Admin red** - wrong Client ID, deleted application, or insufficient scope.
-- **OAuth red** - expired or revoked token. Reconnect via the PMS Connection card.
-- **Webhook red** - PMS plan limits, invalid URL, or webhook quota exhausted.
+Each failed row has its own **Retry** button - there is no page-wide refresh. The most common failure is a Guesty plan limit on the number of webhooks. Remove an unused webhook in Guesty, then click **Retry**.
 
-Click each light to expand for the underlying error string.
+<Frame caption="Integration Status showing webhooks registered and active">
+  ![Integration status](/images/screenshots/settings-integration-status.png)
+</Frame>
 
 ## Account Preferences
 
-Currently a single setting:
+A single setting:
 
-- **Timezone** - dropdown of US timezones (Pacific, Mountain, Central, Eastern, Alaska, Hawaii). Affects how dates display across PX.
+- **Timezone** - Eastern (ET), Central (CT), Mountain (MT), Arizona (MST), Pacific (PT), Alaska (AKT), or Hawaii (HST). New accounts default to Central.
 
-See [Timezone](/account/timezone) for what the timezone setting affects (and what it does not).
+All date calculations for diagnostics and issue detection use this timezone. See [Timezone](/account/timezone) for what the setting affects and what it does not.
 
-## Billing & Subscription
+## Billing & Payment
 
-Manage your payment method:
+Manage the payment method used for monthly subscription billing:
 
-- **No payment method** - displays an **Add Payment Method** button that opens Stripe Checkout in a new tab.
-- **Card on file** - displays the brand and last 4 (e.g., *Visa ending in 4242*) plus expiration. **Remove** button to delete.
-- **Bank account on file** - displays the bank name and last 4. **Remove** button to delete.
+- **No payment method** - shows an **Add Payment Method** button that opens Stripe Checkout in a new tab.
+- **Card on file** - shows the brand and last 4 (for example, *Visa ending in 4242*) plus expiration, with a **Remove** button.
+- **Bank account on file** - shows the bank name and last 4, with a **Remove** button.
 
 See [Billing](/account/billing) for the full billing workflow.
 
 ## Danger Zone
 
-A single button: **Delete Account**.
+A single button: **Delete Account**, described as *Permanently delete your account and all associated data*.
 
-Clicking it opens a confirmation dialog with a 2FA-style verification step. Deleting:
+Clicking it opens a confirmation dialog with a verification step. Deleting:
 
 - Removes your PMS credentials.
 - Removes business models, tax configuration, and audit history.
@@ -79,11 +113,11 @@ Irreversible. See [Delete account](/account/delete-account).
 
 ## Layout notes
 
-The Settings page is the **first stop** for new users. PX redirects new sign-ins here when no PMS is configured because nothing else works without a PMS connection.
+Settings is the **first stop** for new users. PX sends new sign-ins here when no PMS is configured, because nothing else works without a PMS connection.
 
 Existing users typically only return to Settings to:
 
-- Refresh integration status after a PMS-side change.
-- Update timezone after moving offices.
+- Check integration status after a change on the PMS side.
+- Update the timezone after moving offices.
 - Replace a payment method.
 - Disconnect when offboarding.

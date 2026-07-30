@@ -5,10 +5,6 @@ description: "Guesty credentials, integration status, account preferences, billi
 
 The **Settings** page is the home for everything that affects your account globally - your PMS connection, integration health, your timezone, billing, and (when needed) deleting the account.
 
-<Frame caption="The Settings page with a Guesty Marketplace connection">
-  ![Settings page](/images/screenshots/settings-overview.png)
-</Frame>
-
 The page is organized into cards:
 
 1. **Guesty API Credentials**
@@ -24,10 +20,14 @@ This card shows how your Guesty account is connected and lets you remove the con
 Guesty issued the credentials when you connected, so there is nothing to paste or edit here. See [Connect Guesty](/integrations/connect-guesty) for how the connection is made.
 
 <Note>
+  If your badge reads **Connected with API keys** instead, your account is on an older connection type that PX no longer sets up. It keeps working, and nothing here needs your attention. Contact [support](mailto:support@pxaccounting.com) before you disconnect it, because reconnecting will move you to the Marketplace flow above.
+</Note>
+
+<Note>
   This card is provider-specific. On an OwnerRez account it reads **OwnerRez Connected** instead, with the subtitle *Your OwnerRez account is connected via OAuth* (or *via Personal Access Token*) and a **Disconnect** button. Before any PMS is connected, the card is **Connect Your PMS** and shows the provider picker.
 </Note>
 
-<Frame caption="Guesty API Credentials card, connected via the Guesty Marketplace">
+<Frame caption="The top of the Settings page with a Guesty Marketplace connection">
   ![Guesty connected](/images/screenshots/settings-guesty-connected.png)
 </Frame>
 

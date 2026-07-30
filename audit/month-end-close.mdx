@@ -101,19 +101,44 @@ See [Accounting Audit](/audit/accounting-audit) for the filters, the bulk action
 
 ## Listings tab
 
-A sortable per-listing breakdown. Filter with **All**, **With issues**, or **Tied out only**; the count of visible rows sits beside the filters.
+A sortable per-listing breakdown, so you can see which properties account for the month's exposure.
 
-Columns: **Listing**, **Money flagged**, **Audit findings**, **Diagnostics**, and **Status**. Status is a **Tied out** badge when the listing reconciled and **Review** when it did not. Click any column header to sort.
+<Frame caption="The Listings tab, sorted by money flagged">
+  ![Month-End Close listings](/images/screenshots/month-end-close-listings.png)
+</Frame>
+
+Filter with **All**, **With issues**, or **Tied out only**. The count of visible rows sits beside the filters, so on a large portfolio you can tell at a glance how much the filter removed.
+
+| Column | What it shows |
+| --- | --- |
+| **Listing** | Property name. |
+| **Money flagged** | Combined financial and accounting exposure for that listing. |
+| **Audit findings** | Financial Audit findings. |
+| **Diagnostics** | Accounting Audit issues. |
+| **Status** | **Tied out** when the listing reconciled, **Review** when it did not. |
+
+Click any column header to sort. The table opens sorted by **Money flagged**, descending, which puts your largest problems first.
+
+A listing can show **Review** with zero Audit findings: one Accounting Audit issue is enough to hold it open. Check the **Diagnostics** column before assuming a clean Financial Audit means a clean listing.
 
 ## Analytics tab
 
-Five charts over the same month:
+Five charts over the same month.
 
-- **Exceptions by severity** - combined Financial and Accounting exceptions.
-- **Money flagged by listing** - top listings by combined exposure.
-- **Exceptions by type** - findings by category, across both audits.
-- **Money flagged by type** - exposure by category, across both audits.
-- **Revenue composition** - what guests were charged, from Financial Audit line items.
+<Frame caption="Exceptions by severity and money flagged by listing">
+  ![Month-End Close analytics](/images/screenshots/month-end-close-analytics.png)
+</Frame>
+
+- **Exceptions by severity** - combined Financial and Accounting exceptions, split high / medium / low. These are the same counts as the severity tiles on the Overview tab.
+- **Money flagged by listing** - your most exposed listings, ranked by combined financial and accounting exposure. Useful for deciding which property to work first.
+
+<Frame caption="Exceptions by type, money flagged by type, and revenue composition">
+  ![Month-End Close analytics by type](/images/screenshots/month-end-close-analytics-types.png)
+</Frame>
+
+- **Exceptions by type** - findings by category across both audits, so you can see whether the month is dominated by one recurring problem. Categories are the human-readable check names, such as *Missing Fee*, *Fee Amount Mismatch*, *Missing Payment*, *Tax Amount Mismatch*, *Ad Ledger Balance Mismatch*, or *Canceled Uncollected Revenue*.
+- **Money flagged by type** - the same categories ranked by dollars rather than count. The two often disagree: the most frequent exception is rarely the most expensive one, so read them together before deciding where to spend time.
+- **Revenue composition** - what guests were charged, from Financial Audit line items, broken into **Rent**, **Expense**, **Tax**, and **Fee**. Expenses plot to the left of zero because they reduce what reaches the owner, so the axis runs negative as well as positive.
 
 Each chart shows an empty message instead of an axis when the month has nothing to plot.
 

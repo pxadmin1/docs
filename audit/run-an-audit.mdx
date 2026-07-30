@@ -1,12 +1,16 @@
 ---
-title: "Run an audit"
-description: "Step-by-step walkthrough of generating an audit and reading the results."
+title: "Run a Financial Audit"
+description: "Step-by-step walkthrough of generating a Financial Audit and reading the results."
 ---
+
+This page covers the **Financial Audit**: the audit that checks whether the right amounts were charged on each booking, across fees, taxes, and commission. It is the audit behind the **Financial Audit** entry in the sidebar.
+
+For ledger and guest-money integrity, see the [Accounting Audit](/audit/accounting-audit) instead. To run both over the same month, use [Month-End Close](/audit/month-end-close).
 
 Open the **Financial Audit** page in the sidebar.
 
-<Frame caption="Audits page controls">
-  ![Audits controls](/images/screenshots/audit-controls.png)
+<Frame caption="Financial Audit page controls">
+  ![Financial Audit controls](/images/screenshots/audit-controls.png)
 </Frame>
 
 ## Set the parameters
@@ -111,7 +115,7 @@ Each audit gets a fresh ID. There is no concept of "updating" a past audit - jus
 
 ### Period close audit
 
-Run on the 1st of each month for the previous month:
+For closing a period, prefer [Month-End Close](/audit/month-end-close) - it covers this audit and the Accounting Audit over the same month, and exports one PDF. Use the range-based run below when you want the Financial Audit on its own:
 
 - Start: 1st of last month.
 - End: last day of last month.

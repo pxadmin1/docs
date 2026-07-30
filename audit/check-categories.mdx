@@ -3,7 +3,7 @@ title: "What an audit checks"
 description: "The three classes of checks PX runs against your reservations."
 ---
 
-When you run an audit, PX inspects every reservation in scope and runs three classes of checks. The exact mix depends on your PMS - some checks rely on accounting data only certain PMSes expose - but every audit covers all three categories at a high level.
+The [Accounting Audit](/audit/accounting-audit) groups its checks into three classes. The exact mix depends on your PMS - some checks rely on accounting data only certain PMSes expose - but a run covers all three categories at a high level.
 
 ## Class 1 - cross-system validation
 
@@ -39,8 +39,11 @@ PX is an accounting and trust audit tool. It does not check pricing decisions, c
 
 ## Severity and verdicts
 
-Every check produces a finding with a severity (`error`, `warning`, or `info`) and a contribution to the audit's overall verdict (`clean`, `underpaid`, or `overpaid`). See [Understanding findings](/audit/understanding-findings) for how to read individual findings.
+The two audits score their results on different scales:
+
+- **Accounting Audit** issues are **high**, **medium**, or **low**, and you close each one out as fixed or dismissed. See [Accounting Audit](/audit/accounting-audit).
+- **Financial Audit** findings carry a severity of `error`, `warning`, or `info`, and contribute to an overall verdict of `CLEAN`, `UNDERPAID`, or `OVERPAID`. See [Understanding findings](/audit/understanding-findings).
 
 ## In-product reference
 
-The in-app audit results page shows the specific check name, expected amount, actual amount, and reasoning for every finding. That is the canonical reference for what a given finding means and how to triage it.
+The in-app results show the specific check name, expected amount, actual amount, and reasoning for every finding. That is the canonical reference for what a given finding means and how to triage it.

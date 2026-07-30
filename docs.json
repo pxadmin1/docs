@@ -112,10 +112,11 @@
         "pages": [
           "audit/overview",
           "audit/run-an-audit",
+          "audit/accounting-audit",
+          "audit/month-end-close",
           "audit/understanding-findings",
           "audit/check-categories",
-          "audit/export-pdf",
-          "audit/month-end-close"
+          "audit/export-pdf"
         ]
       },
       {

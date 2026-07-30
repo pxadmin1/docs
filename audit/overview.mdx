@@ -1,38 +1,55 @@
 ---
 title: "Audits overview"
-description: "What an audit does, what it checks, and how to read the results."
+description: "The two audits PX runs - the Financial Audit and the Accounting Audit - and when to use each."
 ---
 
-An **audit** is a one-shot diagnostic run across a date range. PX inspects every reservation in the range, compares it against your business model, your tax configuration, and your PMS catalog, then reports findings.
+PX runs **two** audits. They answer different questions, produce different kinds of results, and you reach them in different places:
 
-Audits do not modify your PMS. They are read-only diagnostics.
+| | Financial Audit | Accounting Audit |
+| --- | --- | --- |
+| **Question it answers** | Were the right amounts charged? | Did the money and the books end up in the right place? |
+| **Covers** | Fees, taxes, and commission | Ledger and guest-money integrity |
+| **Scope you choose** | A date range, up to 62 days | A calendar month |
+| **Result** | Findings per reservation, plus a verdict | Issues you work through and close out |
+| **Severity scale** | `error`, `warning`, `info` | High, medium, low |
+| **Where you run it** | **Financial Audit** in the sidebar | As part of **Month-End Close** |
+
+Neither audit modifies your PMS. Both are read-only: PX audits the data your PMS produces.
 
 <CardGroup cols={2}>
-  <Card title="Run an audit" icon="play" href="/audit/run-an-audit">
+  <Card title="Run a Financial Audit" icon="play" href="/audit/run-an-audit">
     Pick a date range, choose a listing, click Generate.
+  </Card>
+  <Card title="Accounting Audit" icon="scale" href="/audit/accounting-audit">
+    Ledger and guest-money integrity, and how to clear issues.
+  </Card>
+  <Card title="Month-end close" icon="calendar-check" href="/audit/month-end-close">
+    Run both audits over one month and review them together.
   </Card>
   <Card title="Understanding findings" icon="search" href="/audit/understanding-findings">
     Severity, expected vs actual, config source, reasoning.
   </Card>
-  <Card title="Check categories" icon="list" href="/audit/check-categories">
-    Every check PX runs by PMS.
-  </Card>
-  <Card title="Export PDF" icon="file-text" href="/audit/export-pdf">
-    Download a shareable audit report.
-  </Card>
 </CardGroup>
+
+## Which one do you want?
+
+Reach for the **Financial Audit** when you have a question about amounts on bookings: a tax that looks wrong, a commission that does not match the agreement, a specific booking you want to investigate. You control the exact window, so it is the right tool for a narrow look at recent history or a single property.
+
+Reach for the **Accounting Audit** when you are closing a period and need the books to hold up: payments that never landed, ledger entries that do not balance, cancellations that left money stranded. It is scoped to a month because that is the unit a close is measured in.
+
+Most operators end up using [Month-End Close](/audit/month-end-close), which runs both over the same month and shows the combined exposure in one place. You do not have to wait for month end to use it - it runs on demand, any day of the month, for any month you pick.
 
 ## When to run an audit
 
-- **Period close** - run a 30-day or 60-day audit at the end of each accounting period.
+- **Period close** - use [Month-End Close](/audit/month-end-close) for the month you are closing. It covers both audits at once.
 - **Owner statement prep** - run before sending statements to catch issues that affect payouts.
-- **After a configuration change** - changed a tax rate or commission percent? Audit the affected period to verify the new rules are applied.
-- **Onboarding a new owner / property** - audit recent history to validate the new business model.
-- **Investigation** - when a specific booking looks wrong, audit a narrow window with a listing filter.
+- **After a configuration change** - changed a tax rate or commission percent? Run a Financial Audit over the affected period to verify the new rules are applied.
+- **Onboarding a new owner or property** - audit recent history to validate the new business model.
+- **Investigation** - when a specific booking looks wrong, run a Financial Audit over a narrow window with a listing filter.
 
-## What an audit returns
+## What the Financial Audit returns
 
-A successful audit returns a structured response with three layers:
+A successful run returns three layers:
 
 ### Summary
 
@@ -49,10 +66,7 @@ A table with one row per reservation:
 - Number of findings.
 - Net discrepancy (positive when you under-collected, negative when you over-collected).
 
-Click a row to expand it - the expansion shows:
-
-- **Line items** - rent, fees, taxes, expenses on the booking.
-- **Findings** - the detailed list with severity, expected, actual, difference, source, and reasoning.
+Click a row to expand it. The expansion shows the **line items** on the booking and the **findings**, each with severity, expected, actual, difference, source, and reasoning.
 
 ### Findings breakdown
 
@@ -60,11 +74,10 @@ A grid of finding types with counts. Click a type to filter the results table.
 
 ## Constraints
 
+These apply to the Financial Audit. Month-End Close takes a month instead of a range, so it is not affected.
+
 - The audit window cannot exceed **62 days**. For longer ranges, run multiple audits back to back.
-- The Generate button is disabled when:
-  - The range exceeds 62 days.
-  - Start date is after end date.
-  - You have not connected a PMS yet.
+- The Generate button is disabled when the range exceeds 62 days, the start date is after the end date, or you have not connected a PMS yet.
 
 ## How long does an audit take?
 
@@ -73,4 +86,4 @@ It depends on how many reservations are in the window. As a rough guide, PX chec
 - A small portfolio over a month: usually under a minute or two.
 - A large portfolio over the full 62-day window: a few minutes, sometimes up to ten on the busiest accounts.
 
-While the audit runs, leave the tab open - you can keep working elsewhere on your computer; just don't close the browser or navigate this tab to another PX page. An elapsed-time card shows progress, and your results appear on this same page when it finishes.
+While a run is in progress, leave the tab open. You can keep working elsewhere on your computer; just don't close the browser or navigate this tab to another PX page. An elapsed-time card shows progress, and your results appear on the same page when it finishes.

@@ -51,6 +51,31 @@ Every issue carries a severity, and the close summarizes them as tiles:
 
 ## Working through issues
 
+<Frame caption="The Accounting Audit tab in Month-End Close">
+  ![Accounting Audit issues](/images/screenshots/accounting-audit-issues.png)
+</Frame>
+
+Four cards sit above the list. Two of them are scoped to the month you are closing, and two are not:
+
+| Card | Scope |
+| --- | --- |
+| **Unresolved** | This close. Carries a **Needs Review** badge while the count is above zero. |
+| **Fix in Progress** | This close. |
+| **Total Issues (All Time)** | Every issue on the account, not just this month. |
+| **Fixed (All Time)** | Every issue ever resolved on the account. |
+
+Keep that difference in mind when the numbers do not appear to add up: the two all-time cards are a running total, not a monthly figure.
+
+### Narrowing the list
+
+Three dropdowns filter what you see:
+
+- **Status** - **Open only**, **All statuses**, **Unresolved**, **Fix in progress**, **Fixed**, or **Dismissed**.
+- **Severity** - **All Severities**, or one of high, medium, low.
+- **Issue type** - **All Issue Types**, or a single check, such as *Canceled: Uncollected Revenue*.
+
+### The lifecycle
+
 Each issue moves through a short lifecycle:
 
 | Status | Meaning |
@@ -64,13 +89,28 @@ Each issue moves through a short lifecycle:
 
 Where you opened the list changes what you see first. In Month-End Close it starts on **Open only**, so marking an issue fixed clears it out of the working list. On a property page the panel is titled **Accounting Audit Log** and starts on **All statuses**, because there it doubles as the history for that listing. Resolved issues are never deleted in either place - they move out of the way, and the status filter brings them back.
 
-Per issue you can **Mark fixed**, mark that a **Fix started**, or **Dismiss** it. You can also select several and apply any of the three at once. To reverse something, switch the status filter to **Fixed** or **Dismissed** and put those rows back.
+### Acting on issues
+
+Every issue row carries **Mark Fixed**, **Start Fix**, and **Dismiss** buttons.
+
+A bar above the list applies the same actions in bulk, and it adds **Reopen** for putting resolved issues back. It reads *`<n>` issues shown - Apply to all shown*, and that wording is exact: bulk actions hit every issue currently passing your filters, not a set you tick individually.
+
+<Warning>
+  Bulk actions apply to everything the filters are showing. Narrow the list first - by severity, issue type, or status - and check the count in the bar before you click. To reopen a batch, filter to **Fixed** or **Dismissed**, confirm the count, then click **Reopen**.
+</Warning>
 
 <Warning>
   Marking an issue fixed or dismissed removes it from the exception counts and the money flagged for that close. The headline banner and the Overview figures move as you work, so resolve issues because they are genuinely resolved, not to clear the number.
 </Warning>
 
-Filter the list by **Open only**, **All statuses**, **Unresolved**, **Fix in progress**, **Fixed**, or **Dismissed**.
+### What a row tells you
+
+Each issue shows, in order: a **severity** badge, a **status** badge, the **check name** (for example *Canceled: Uncollected Revenue*), and the **listing** it belongs to. Beneath that:
+
+- A plain-English explanation of what went wrong and what to do about it, usually ending in a numeric breakdown so you can see how PX arrived at the figure.
+- **Open in Guesty** - jumps straight to the reservation in your PMS.
+- **Why this was flagged** - expands to show the rule PX applied, why this particular booking tripped it, and what to check.
+- **Detected** - the date PX first raised the issue.
 
 ## Letting PX close them for you
 
